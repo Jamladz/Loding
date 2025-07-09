@@ -1,170 +1,118 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="منصة جملة للملابس والأحذية - بالجملة فقط">
-    <title>JAMLA | منصة الجملة للموضة</title>
+    <meta name="theme-color" content="#000000">
+    <title>Coming Soon</title>
     <style>
-        :root {
-            --primary-color: #D4AF37; /* ذهبي أكثر أناقة */
-            --secondary-color: #FFF8E1;
-            --accent-color: #FFC107;
-            --text-color: #2C3E50; /* أزرق داكن أنيق */
-            --light-text: #7F8C8D;
-            --bg-color: #FDFDFD;
-            --card-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
         
         body {
-            font-family: 'Tajawal', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-image: url('https://i.suar.me/xpLwQ/l');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
             height: 100vh;
-            overflow: hidden;
-            position: relative;
-            background-image: linear-gradient(to bottom, #f9f9f9, #ffffff);
-        }
-        
-        .floating-icons {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 0;
-            pointer-events: none;
-        }
-        
-        .floating-icon {
-            position: absolute;
-            opacity: 0.08;
-            color: var(--primary-color);
-            animation: float 18s infinite linear;
-            filter: drop-shadow(1px 1px 2px rgba(0,0,0,0.1));
-        }
-        
-        @keyframes float {
-            0% { transform: translateY(0) rotate(0deg) scale(1); }
-            50% { transform: translateY(-60px) rotate(180deg) scale(1.05); }
-            100% { transform: translateY(0) rotate(360deg) scale(1); }
-        }
-        
-        .login-container {
-            position: relative;
-            z-index: 10;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100%;
-            padding: 20px;
             text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%);
+            z-index: 0;
+        }
+        
+        .content {
+            position: relative;
+            z-index: 1;
+            width: 90%;
+            max-width: 500px;
+            padding: 40px;
+            backdrop-filter: blur(5px);
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 1.5s ease-in-out;
+        }
+        
+        .logo-container {
+            margin-bottom: 30px;
+            position: relative;
         }
         
         .logo {
-            margin-bottom: 40px;
-            animation: fadeIn 1s ease-out;
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 5px;
+            transition: all 0.5s ease;
         }
         
-        .logo h1 {
-            font-size: 48px;
-            font-weight: 800;
-            color: var(--primary-color);
-            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.15);
-            margin-bottom: 15px;
-            letter-spacing: -1.5px;
+        .logo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        
+        h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            background: linear-gradient(90deg, #ffffff, #dddddd);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             position: relative;
-            display: inline-block;
+            padding-bottom: 15px;
         }
         
-        .logo h1::after {
-            content: "";
+        h1::after {
+            content: '';
             position: absolute;
-            bottom: -10px;
-            right: 0;
-            width: 60%;
-            height: 3px;
-            background: linear-gradient(90deg, var(--primary-color), transparent);
-            border-radius: 3px;
-        }
-        
-        .welcome-message {
-            font-size: 22px;
-            color: var(--text-color);
-            margin-bottom: 15px;
-            font-weight: 600;
-            line-height: 1.5;
-            max-width: 500px;
-        }
-        
-        .wholesale-notice {
-            background: linear-gradient(to left, #FFF9E6, #FFFDF6);
-            padding: 15px 25px;
-            border-radius: 10px;
-            border-right: 4px solid var(--primary-color);
-            font-weight: 700;
-            color: #C57600;
-            margin-bottom: 40px;
-            max-width: 450px;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            animation: pulse 2s infinite;
-        }
-        
-        .wholesale-notice:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
         }
         
         .progress-container {
             width: 100%;
-            max-width: 450px;
-            margin-top: 30px;
-        }
-        
-        .progress-text {
-            text-align: center;
-            margin-bottom: 15px;
-            color: var(--light-text);
-            font-size: 16px;
-            font-weight: 500;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            margin: 30px 0;
+            border-radius: 2px;
+            overflow: hidden;
         }
         
         .progress-bar {
-            height: 10px;
-            background-color: rgba(0, 0, 0, 0.05);
-            border-radius: 5px;
-            overflow: hidden;
-            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-        
-        .progress {
             height: 100%;
             width: 0;
-            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-            border-radius: 5px;
-            transition: width 0.4s ease-out;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .progress::after {
-            content: "";
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            left: 0;
-            background: linear-gradient(
-                to right,
-                rgba(255, 255, 255, 0.1) 0%,
-                rgba(255, 255, 255, 0.6) 50%,
-                rgba(255, 255, 255, 0.1) 100%
-            );
-            animation: shimmer 2s infinite;
+            background: linear-gradient(90deg, #ffffff, #aaaaaa);
+            transition: width 1s ease-out;
         }
         
         @keyframes fadeIn {
@@ -172,119 +120,57 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.02); }
-            100% { transform: scale(1); }
-        }
-        
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-        
-        /* تأثيرات للشاشات الكبيرة */
-        @media (min-width: 768px) {
-            .logo h1 { font-size: 56px; }
-            .welcome-message { font-size: 24px; }
+        @media (max-width: 600px) {
+            .content {
+                padding: 30px 20px;
+                width: 95%;
+            }
+            
+            h1 {
+                font-size: 2.5rem;
+                letter-spacing: 5px;
+            }
+            
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
         }
     </style>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="floating-icons" id="floating-icons"></div>
-    
-    <div class="login-container">
-        <div class="logo">
-            <h1>JAMLA</h1>
-            <div class="welcome-message">مرحباً بكم في منصة جملة الرائدة للملابس والأحذية</div>
-            <div class="wholesale-notice">
-                <i class="fas fa-exclamation-circle" style="margin-left: 8px;"></i>
-                تنبيه: هذه المنصة للبيع بالجملة فقط - الحد الأدنى للطلب 2 سيري
-            </div>
+    <div class="content">
+        <div class="logo-container">
+            <img src="https://i.suar.me/3A2Xe/l" alt="Logo" class="logo">
         </div>
-        
+        <h1>Coming Soon</h1>
         <div class="progress-container">
-            <p class="progress-text">جاري إعداد لوحة التحكم الخاصة بك...</p>
-            <div class="progress-bar">
-                <div class="progress" id="progress"></div>
-            </div>
+            <div class="progress-bar" id="progressBar"></div>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // إنشاء الأيقونات العائمة بشكل أكثر ديناميكية
-            const floatingIcons = document.getElementById('floating-icons');
-            const icons = [
-                'fas fa-tshirt', 'fas fa-shoe-prints', 'fas fa-boxes',
-                'fas fa-truck', 'fas fa-warehouse', 'fas fa-tag',
-                'fas fa-percent', 'fas fa-shopping-basket'
-            ];
-            
-            // إنشاء 20 أيقونة مع توزيع أفضل
-            for (let i = 0; i < 20; i++) {
-                const icon = document.createElement('i');
-                icon.className = icons[Math.floor(Math.random() * icons.length)] + ' floating-icon';
-                
-                // توزيع أكثر ذكاءً للأيقونات
-                const sector = i % 4;
-                let left, top;
-                
-                if (sector === 0) {
-                    left = Math.random() * 30;
-                    top = Math.random() * 30;
-                } else if (sector === 1) {
-                    left = 70 + Math.random() * 30;
-                    top = Math.random() * 30;
-                } else if (sector === 2) {
-                    left = Math.random() * 30;
-                    top = 70 + Math.random() * 30;
-                } else {
-                    left = 70 + Math.random() * 30;
-                    top = 70 + Math.random() * 30;
-                }
-                
-                icon.style.left = left + '%';
-                icon.style.top = top + '%';
-                icon.style.fontSize = (Math.random() * 25 + 20) + 'px';
-                icon.style.animationDelay = Math.random() * 5 + 's';
-                icon.style.animationDuration = (Math.random() * 15 + 15) + 's';
-                icon.style.opacity = 0.05 + Math.random() * 0.08;
-                
-                floatingIcons.appendChild(icon);
+        // Smooth progress animation
+        let progress = 0;
+        const progressBar = document.getElementById('progressBar');
+        
+        const animateProgress = () => {
+            progress += 0.5;
+            if (progress > 100) {
+                progress = 100;
+                setTimeout(() => {
+                    progress = 0;
+                    progressBar.style.width = '0%';
+                    setTimeout(animateProgress, 500);
+                }, 1000);
+            } else {
+                progressBar.style.width = progress + '%';
+                requestAnimationFrame(animateProgress);
             }
-            
-            // تحميل أكثر سلاسة مع تأثير التقدم
-            let width = 0;
-            const progressBar = document.getElementById('progress');
-            const progressText = document.querySelector('.progress-text');
-            const messages = [
-                "جاري تحميل البيانات...",
-                "جاري إعداد الكتالوج...",
-                "جاري تحميل العروض...",
-                "جاري التحضير للعرض..."
-            ];
-            
-            const interval = setInterval(function() {
-                if (width >= 100) {
-                    clearInterval(interval);
-                    progressText.textContent = "جاهز! جاري التوجيه إلى لوحة التحكم...";
-                    setTimeout(() => {
-                        window.location.href = "https://jamladz.github.io/Home/";
-                    }, 800);
-                } else {
-                    width += 0.7;
-                    progressBar.style.width = width + '%';
-                    
-                    // تغيير الرسالة حسب مرحلة التحميل
-                    if (width > 25 && width < 30) progressText.textContent = messages[1];
-                    else if (width > 50 && width < 55) progressText.textContent = messages[2];
-                    else if (width > 75 && width < 80) progressText.textContent = messages[3];
-                }
-            }, 40);
-        });
+        };
+        
+        // Start animation after slight delay
+        setTimeout(animateProgress, 1000);
     </script>
 </body>
 </html>
