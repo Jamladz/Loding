@@ -332,6 +332,23 @@
             color: var(--primary);
         }
 
+        /* Mining Section */
+        .mining-section {
+            text-align: center;
+            margin: 30px 0;
+        }
+
+        .mining-timer {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .timer-text {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
         /* Ad Section */
         .ad-section {
             text-align: center;
@@ -342,11 +359,6 @@
             margin-top: 15px;
             font-size: 0.9rem;
             color: var(--text-secondary);
-        }
-
-        .timer-text {
-            font-weight: 600;
-            color: var(--primary);
         }
 
         /* Transactions */
@@ -466,6 +478,28 @@
             color: var(--primary);
             margin-right: 16px;
             font-size: 1.1rem;
+        }
+
+        .task-status {
+            font-size: 0.8rem;
+            padding: 4px 8px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: rgba(40, 167, 69, 0.1);
+            color: var(--success);
+        }
+
+        .status-completed {
+            background: rgba(108, 117, 125, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .status-waiting {
+            background: rgba(255, 193, 7, 0.1);
+            color: var(--warning);
         }
 
         /* Referral */
@@ -854,7 +888,7 @@
             <section id="home" class="page active">
                 <div class="welcome-section">
                     <div class="welcome-text">Welcome, <span class="username" id="welcome-username">@username</span></div>
-                    <p>Earn Pi tokens by completing simple tasks!</p>
+                    <p>Earn Pi tokens by mining and completing tasks!</p>
                 </div>
 
                 <div class="card">
@@ -868,12 +902,23 @@
                 </div>
 
                 <div class="card">
+                    <div class="mining-section">
+                        <button class="btn btn-primary btn-block" id="start-mining-btn">
+                            <i class="fas fa-play-circle"></i> Start Mining — Earn 5 ΠS
+                        </button>
+                        <div class="mining-timer" id="mining-timer">
+                            Next mining in: <span class="timer-text" id="mining-timer-value">24:00:00</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
                     <div class="ad-section">
-                        <button class="btn btn-primary btn-block" id="watch-ad-btn">
-                            <i class="fas fa-play-circle"></i> Watch Ad — Earn 1 ΠS
+                        <button class="btn btn-warning btn-block" id="watch-ad-btn">
+                            <i class="fas fa-ad"></i> Watch Ad — Earn 1 ΠS
                         </button>
                         <div class="ad-timer" id="ad-timer">
-                            Next ad in: <span class="timer-text" id="timer-value">0s</span>
+                            Next ad in: <span class="timer-text" id="ad-timer-value">0s</span>
                         </div>
                     </div>
                 </div>
@@ -906,7 +951,7 @@
                     <div class="card-header">
                         <div class="card-title">Invite Friends</div>
                     </div>
-                    <p>Share your referral code with friends and earn 10 ΠS for each successful referral!</p>
+                    <p>Share your referral link with friends and earn 5 ΠS for each successful referral!</p>
                     
                     <div class="referral-code" id="referral-code">PISWAP-1234</div>
                     
@@ -923,7 +968,7 @@
                     
                     <div class="share-buttons">
                         <button class="btn btn-primary share-btn" id="copy-referral-btn">
-                            <i class="fas fa-copy"></i> Copy Code
+                            <i class="fas fa-copy"></i> Copy Link
                         </button>
                         <button class="btn btn-secondary share-btn" id="share-telegram-btn">
                             <i class="fab fa-telegram"></i> Share on Telegram
@@ -1006,8 +1051,8 @@
     <div class="modal-overlay" id="ad-modal">
         <div class="modal">
             <div class="modal-header">
-                <div class="modal-title">Watch Ad to Earn 1 ΠS</div>
-                <button class="modal-close" id="close-ad-modal">×</button>
+                <div class="modal-title">Watch Ad to Earn Rewards</div>
+                <button class="modal-close" id="close-ad-modal">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="ad-container">
@@ -1050,6 +1095,11 @@
                 count: 0,
                 earnings: 0
             },
+            mining: {
+                active: false,
+                nextAvailable: null,
+                lastMined: null
+            },
             adCooldown: 0,
             adsWatchedToday: 0,
             lastAdWatch: null
@@ -1069,9 +1119,12 @@
             welcomeUsername: document.getElementById('welcome-username'),
             balanceDisplay: document.getElementById('balance-display'),
             balanceValue: document.getElementById('balance-value'),
+            startMiningBtn: document.getElementById('start-mining-btn'),
+            miningTimer: document.getElementById('mining-timer'),
+            miningTimerValue: document.getElementById('mining-timer-value'),
             watchAdBtn: document.getElementById('watch-ad-btn'),
             adTimer: document.getElementById('ad-timer'),
-            timerValue: document.getElementById('timer-value'),
+            adTimerValue: document.getElementById('ad-timer-value'),
             transactionList: document.getElementById('transaction-list'),
             
             // Tasks page
@@ -1122,7 +1175,8 @@
             // Initialize event listeners
             initEventListeners();
             
-            // Initialize ad cooldown timer
+            // Initialize timers
+            initMiningTimer();
             initAdCooldown();
             
             // Render initial UI
@@ -1148,50 +1202,82 @@
 
         // Load state from localStorage
         function loadState() {
-            const savedState = localStorage.getItem('piSwapState');
-            if (savedState) {
-                const parsedState = JSON.parse(savedState);
-                Object.assign(state, parsedState);
+            // Load user data
+            const savedUser = localStorage.getItem('pi_user');
+            if (savedUser) {
+                state.user = JSON.parse(savedUser);
+            }
+            
+            // Load balance
+            const savedBalance = localStorage.getItem('pi_balance');
+            if (savedBalance) {
+                state.balance = parseInt(savedBalance);
+            }
+            
+            // Load transactions
+            const savedTransactions = localStorage.getItem('pi_transactions');
+            if (savedTransactions) {
+                state.transactions = JSON.parse(savedTransactions);
+            }
+            
+            // Load mining data
+            const savedMining = localStorage.getItem('pi_mining');
+            if (savedMining) {
+                state.mining = JSON.parse(savedMining);
+            }
+            
+            // Load ad cooldown
+            const savedAdCooldown = localStorage.getItem('pi_ad_cooldown');
+            if (savedAdCooldown) {
+                state.adCooldown = parseInt(savedAdCooldown);
+            }
+            
+            // Load tasks
+            const savedTasks = localStorage.getItem('pi_tasks');
+            if (savedTasks) {
+                state.tasks = JSON.parse(savedTasks);
             } else {
-                // Initialize with demo data
-                state.balance = 15;
-                state.transactions = [
-                    { id: 1, type: 'ad', amount: 1, description: 'Adsgram Ad Reward', date: new Date().toISOString() },
-                    { id: 2, type: 'task', amount: 10, description: 'Task: Join Channel', date: new Date(Date.now() - 86400000).toISOString() },
-                    { id: 3, type: 'referral', amount: 10, description: 'Referral Bonus', date: new Date(Date.now() - 172800000).toISOString() }
-                ];
+                // Initialize with demo tasks
                 state.tasks = [
                     { 
                         id: 1, 
-                        title: 'Watch Adsgram Ads', 
-                        description: 'Watch ads every 30 seconds to earn Pi tokens', 
+                        title: 'Watch Adsgram Ad', 
+                        description: 'Watch an ad every 30 seconds to earn 1 Pi token', 
                         reward: 1, 
                         completed: false,
-                        progress: 0,
-                        target: 5,
-                        type: 'repeatable'
+                        type: 'repeatable',
+                        cooldown: 30
                     },
                     { 
                         id: 2, 
-                        title: 'Join our Telegram Channel', 
-                        description: 'Join the official Pi Swap channel', 
-                        reward: 10, 
-                        completed: true 
+                        title: 'Join Pi Network Channel', 
+                        description: 'Join the official Pi Network channel', 
+                        reward: 2, 
+                        completed: false,
+                        type: 'channel',
+                        channel: '@PiNetwork'
                     },
                     { 
                         id: 3, 
-                        title: 'Like our Post', 
-                        description: 'Like our latest post on social media', 
-                        reward: 5, 
-                        completed: false 
+                        title: 'Join Pi Swap Community', 
+                        description: 'Join our community channel for updates', 
+                        reward: 2, 
+                        completed: false,
+                        type: 'channel',
+                        channel: '@PiSwapCommunity'
                     }
                 ];
+            }
+            
+            // Load referrals
+            const savedReferrals = localStorage.getItem('pi_referrals');
+            if (savedReferrals) {
+                state.referrals = JSON.parse(savedReferrals);
+            } else {
+                // Generate referral code
                 state.referrals.code = generateReferralCode();
                 state.referrals.count = 0;
                 state.referrals.earnings = 0;
-                state.adsWatchedToday = 3;
-                
-                saveState();
             }
             
             // Calculate ad cooldown
@@ -1208,7 +1294,13 @@
 
         // Save state to localStorage
         function saveState() {
-            localStorage.setItem('piSwapState', JSON.stringify(state));
+            localStorage.setItem('pi_user', JSON.stringify(state.user));
+            localStorage.setItem('pi_balance', state.balance.toString());
+            localStorage.setItem('pi_transactions', JSON.stringify(state.transactions));
+            localStorage.setItem('pi_mining', JSON.stringify(state.mining));
+            localStorage.setItem('pi_ad_cooldown', state.adCooldown.toString());
+            localStorage.setItem('pi_tasks', JSON.stringify(state.tasks));
+            localStorage.setItem('pi_referrals', JSON.stringify(state.referrals));
         }
 
         // Initialize Telegram WebApp integration
@@ -1229,6 +1321,9 @@
                     
                     // Enable closing confirmation
                     tg.enableClosingConfirmation();
+                    
+                    // Save user data
+                    saveState();
                 }
             } else {
                 // Demo user (for testing outside Telegram)
@@ -1272,6 +1367,9 @@
 
         // Initialize event listeners
         function initEventListeners() {
+            // Mining button
+            elements.startMiningBtn.addEventListener('click', startMining);
+            
             // Watch ad button
             elements.watchAdBtn.addEventListener('click', openAdModal);
             
@@ -1280,13 +1378,39 @@
             elements.skipAdBtn.addEventListener('click', closeAdModal);
             
             // Copy referral code
-            elements.copyReferralBtn.addEventListener('click', copyReferralCode);
+            elements.copyReferralBtn.addEventListener('click', copyReferralLink);
             
             // Share on Telegram
             elements.shareTelegramBtn.addEventListener('click', shareOnTelegram);
             
             // Withdraw button
             elements.withdrawBtn.addEventListener('click', processWithdrawal);
+        }
+
+        // Initialize mining timer
+        function initMiningTimer() {
+            if (state.mining.nextAvailable) {
+                const now = new Date().getTime();
+                const nextAvailable = new Date(state.mining.nextAvailable).getTime();
+                
+                if (now < nextAvailable) {
+                    // Mining is on cooldown
+                    state.mining.active = false;
+                    updateMiningButtonState();
+                    
+                    // Start countdown
+                    const timeDiff = nextAvailable - now;
+                    startMiningCountdown(Math.floor(timeDiff / 1000));
+                } else {
+                    // Mining is available
+                    state.mining.active = true;
+                    updateMiningButtonState();
+                }
+            } else {
+                // First time mining
+                state.mining.active = true;
+                updateMiningButtonState();
+            }
         }
 
         // Initialize ad cooldown timer
@@ -1307,16 +1431,236 @@
             }
         }
 
-        // Update ad button state based on cooldown
+        // Update mining button state
+        function updateMiningButtonState() {
+            if (state.mining.active) {
+                elements.startMiningBtn.disabled = false;
+                elements.startMiningBtn.innerHTML = '<i class="fas fa-play-circle"></i> Start Mining — Earn 5 ΠS';
+                elements.miningTimer.style.display = 'none';
+            } else {
+                elements.startMiningBtn.disabled = true;
+                elements.startMiningBtn.innerHTML = '<i class="fas fa-clock"></i> Mining in Progress';
+                elements.miningTimer.style.display = 'block';
+            }
+        }
+
+        // Update ad button state
         function updateAdButtonState() {
             if (state.adCooldown > 0) {
                 elements.watchAdBtn.disabled = true;
-                elements.timerValue.textContent = `${state.adCooldown}s`;
+                elements.adTimerValue.textContent = `${state.adCooldown}s`;
                 elements.adTimer.style.display = 'block';
             } else {
                 elements.watchAdBtn.disabled = false;
                 elements.adTimer.style.display = 'none';
             }
+        }
+
+        // Start mining process
+        function startMining() {
+            // Show ad modal for mining
+            openAdModal('mining');
+        }
+
+        // Open ad modal
+        function openAdModal(type = 'ad') {
+            elements.adModal.dataset.type = type;
+            elements.adModal.classList.add('active');
+            startAdCountdown(type);
+        }
+
+        // Close ad modal
+        function closeAdModal() {
+            elements.adModal.classList.remove('active');
+            resetAdCountdown();
+        }
+
+        // Start ad countdown
+        function startAdCountdown(type) {
+            let countdown = 30;
+            elements.countdown.textContent = countdown;
+            elements.adProgress.style.width = '0%';
+            elements.skipAdBtn.disabled = true;
+            
+            const countdownInterval = setInterval(() => {
+                countdown--;
+                elements.countdown.textContent = countdown;
+                elements.adProgress.style.width = `${(30 - countdown) * (100/30)}%`;
+                
+                if (countdown <= 15) {
+                    elements.skipAdBtn.disabled = false;
+                    elements.skipAdBtn.textContent = 'Skip Ad';
+                }
+                
+                if (countdown <= 0) {
+                    clearInterval(countdownInterval);
+                    completeAd(type);
+                }
+            }, 1000);
+            
+            // Store interval ID to clear if needed
+            elements.adModal.countdownInterval = countdownInterval;
+        }
+
+        // Reset ad countdown
+        function resetAdCountdown() {
+            if (elements.adModal.countdownInterval) {
+                clearInterval(elements.adModal.countdownInterval);
+            }
+            
+            elements.skipAdBtn.disabled = true;
+            elements.skipAdBtn.textContent = 'Skip Ad (15s)';
+        }
+
+        // Complete ad watching
+        function completeAd(type) {
+            closeAdModal();
+            
+            if (type === 'mining') {
+                // Complete mining process
+                completeMining();
+            } else {
+                // Complete regular ad task
+                completeAdTask();
+            }
+        }
+
+        // Complete mining process
+        function completeMining() {
+            // Reward user with 5 tokens
+            creditUser(5, 'Mining Reward');
+            
+            // Set mining cooldown (24 hours)
+            const now = new Date();
+            const nextAvailable = new Date(now.getTime() + 24 * 60 * 60 * 1000);
+            
+            state.mining.active = false;
+            state.mining.nextAvailable = nextAvailable.toISOString();
+            state.mining.lastMined = now.toISOString();
+            
+            // Start countdown
+            startMiningCountdown(24 * 60 * 60);
+            
+            // Update UI
+            updateMiningButtonState();
+            
+            showToast('Mining started! You earned 5 ΠS');
+            
+            // Save state
+            saveState();
+            
+            // In a real implementation, you would call:
+            // showAdsgramAd(() => {
+            //   creditUser(5, "Mining Reward");
+            //   startMiningCooldown(24 * 60 * 60);
+            // });
+        }
+
+        // Complete ad task
+        function completeAdTask() {
+            // Reward user with 1 token
+            creditUser(1, 'Adsgram Ad Reward');
+            
+            // Start cooldown timer
+            startAdCooldown(30);
+            
+            showToast('You earned 1 ΠS for watching the ad!');
+            
+            // In a real implementation, you would call:
+            // showAdsgramAd(() => {
+            //   creditUser(1, "Adsgram Ad Reward");
+            //   startAdCooldown(30);
+            // });
+        }
+
+        // Start mining countdown
+        function startMiningCountdown(seconds) {
+            let remaining = seconds;
+            
+            const updateTimer = () => {
+                const hours = Math.floor(remaining / 3600);
+                const minutes = Math.floor((remaining % 3600) / 60);
+                const secs = remaining % 60;
+                
+                elements.miningTimerValue.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+                
+                if (remaining <= 0) {
+                    // Mining is available again
+                    state.mining.active = true;
+                    updateMiningButtonState();
+                    saveState();
+                } else {
+                    remaining--;
+                    setTimeout(updateTimer, 1000);
+                }
+            };
+            
+            updateTimer();
+        }
+
+        // Start ad cooldown
+        function startAdCooldown(seconds) {
+            state.adCooldown = seconds;
+            state.lastAdWatch = new Date().toISOString();
+            saveState();
+            updateAdButtonState();
+            
+            const cooldownInterval = setInterval(() => {
+                state.adCooldown--;
+                updateAdButtonState();
+                
+                if (state.adCooldown <= 0) {
+                    clearInterval(cooldownInterval);
+                    state.adCooldown = 0;
+                    updateAdButtonState();
+                    saveState();
+                }
+            }, 1000);
+        }
+
+        // Adsgram integration function
+        function showAdsgramAd(onComplete) {
+            // Placeholder for actual Adsgram SDK integration
+            // In a real implementation, this would call the Adsgram SDK
+            Adsgram.showAd({
+                adUnitId: 'YOUR_ADSGRAM_UNIT_ID',
+                onReward: onComplete,
+                onError: (e) => {
+                    console.error('Adsgram error:', e);
+                    showToast('Ad failed to load. Please try again.', 'error');
+                }
+            });
+        }
+
+        // Credit user with tokens
+        function creditUser(amount, description) {
+            state.balance += amount;
+            
+            // Add transaction
+            state.transactions.unshift({
+                id: Date.now(),
+                type: 'credit',
+                amount: amount,
+                description: description,
+                date: new Date().toISOString()
+            });
+            
+            // Save state and update UI
+            saveState();
+            renderUI();
+            
+            // Animate balance update
+            animateBalanceUpdate();
+        }
+
+        // Animate balance update
+        function animateBalanceUpdate() {
+            const balanceEl = elements.balanceDisplay;
+            balanceEl.classList.add('balance-update');
+            
+            setTimeout(() => {
+                balanceEl.classList.remove('balance-update');
+            }, 500);
         }
 
         // Render UI based on current state
@@ -1358,6 +1702,7 @@
             li.className = 'transaction-item';
             
             let iconClass = 'fas fa-ad';
+            if (transaction.type === 'mining') iconClass = 'fas fa-digging';
             if (transaction.type === 'task') iconClass = 'fas fa-tasks';
             if (transaction.type === 'referral') iconClass = 'fas fa-user-friends';
             if (transaction.type === 'withdrawal') iconClass = 'fas fa-paper-plane';
@@ -1387,21 +1732,26 @@
                 taskEl.className = 'task-item';
                 
                 let iconClass = 'fas fa-ad';
-                if (task.id === 2) iconClass = 'fas fa-users';
-                if (task.id === 3) iconClass = 'fas fa-thumbs-up';
+                if (task.type === 'channel') iconClass = 'fas fa-users';
                 
-                let buttonText = 'Claim';
+                let buttonText = 'Start';
                 let buttonClass = 'btn-primary';
                 let disabled = false;
+                let statusText = 'Available';
+                let statusClass = 'status-available';
                 
                 if (task.completed) {
                     buttonText = 'Completed';
                     buttonClass = 'btn-secondary';
                     disabled = true;
-                } else if (task.type === 'repeatable') {
-                    buttonText = 'Watch Ad';
-                    buttonClass = state.adCooldown > 0 ? 'btn-secondary' : 'btn-primary';
-                    disabled = state.adCooldown > 0;
+                    statusText = 'Completed';
+                    statusClass = 'status-completed';
+                } else if (task.type === 'repeatable' && state.adCooldown > 0) {
+                    buttonText = `Wait ${state.adCooldown}s`;
+                    buttonClass = 'btn-secondary';
+                    disabled = true;
+                    statusText = 'Waiting';
+                    statusClass = 'status-waiting';
                 }
                 
                 taskEl.innerHTML = `
@@ -1411,10 +1761,9 @@
                     <div class="task-details">
                         <div class="task-title">${task.title}</div>
                         <div class="task-description">${task.description}</div>
-                        ${task.type === 'repeatable' ? 
-                            `<div class="task-progress">${task.progress}/${task.target} ads watched today</div>` : ''}
                     </div>
                     <div class="task-reward">+${task.reward} ΠS</div>
+                    <div class="task-status ${statusClass}">${statusText}</div>
                     <button class="btn ${buttonClass}" 
                             data-task-id="${task.id}" 
                             ${disabled ? 'disabled' : ''}>
@@ -1432,223 +1781,64 @@
             });
         }
 
-        // Render referral info
-        function renderReferralInfo() {
-            elements.referralCode.textContent = state.referrals.code;
-            elements.referralsCount.textContent = state.referrals.count;
-            elements.referralEarnings.textContent = `${state.referrals.earnings} ΠS`;
-        }
-
-        // Open ad modal
-        function openAdModal() {
-            elements.adModal.classList.add('active');
-            startAdCountdown();
-        }
-
-        // Close ad modal
-        function closeAdModal() {
-            elements.adModal.classList.remove('active');
-            resetAdCountdown();
-        }
-
-        // Start ad countdown
-        function startAdCountdown() {
-            let countdown = 30;
-            elements.countdown.textContent = countdown;
-            elements.adProgress.style.width = '0%';
-            elements.skipAdBtn.disabled = true;
-            
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                elements.countdown.textContent = countdown;
-                elements.adProgress.style.width = `${(30 - countdown) * (100/30)}%`;
-                
-                if (countdown <= 15) {
-                    elements.skipAdBtn.disabled = false;
-                    elements.skipAdBtn.textContent = 'Skip Ad';
+        // Claim task reward
+        function claimTask(taskId) {
+            const task = state.tasks.find(t => t.id === taskId);
+            if (task && !task.completed) {
+                if (task.type === 'repeatable') {
+                    // For ad task, open ad modal
+                    openAdModal('ad');
+                } else if (task.type === 'channel') {
+                    // For channel task, open channel and mark as completed
+                    window.open(`https://t.me/${task.channel}`, '_blank');
+                    task.completed = true;
+                    
+                    // Reward user
+                    creditUser(task.reward, `Task: ${task.title}`);
+                    
+                    showToast(`You earned ${task.reward} ΠS for joining the channel!`);
                 }
                 
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    completeAd();
-                }
-            }, 1000);
-            
-            // Store interval ID to clear if needed
-            elements.adModal.countdownInterval = countdownInterval;
-        }
-
-        // Reset ad countdown
-        function resetAdCountdown() {
-            if (elements.adModal.countdownInterval) {
-                clearInterval(elements.adModal.countdownInterval);
-            }
-            
-            elements.skipAdBtn.disabled = true;
-            elements.skipAdBtn.textContent = 'Skip Ad (15s)';
-        }
-
-        // Complete ad watching
-        function completeAd() {
-            closeAdModal();
-            
-            // Credit user with 1 token
-            creditUser(1, 'Adsgram Ad Reward');
-            
-            // Start cooldown timer
-            startAdCooldown(30);
-            
-            // Update tasks progress
-            updateTaskProgress();
-            
-            showToast('You earned 1 ΠS for watching the ad!');
-            
-            // In a real implementation, you would call:
-            // showAdsgramAd(onComplete);
-        }
-
-        // Adsgram integration function
-        function showAdsgramAd(onComplete) {
-            // Placeholder for actual Adsgram SDK integration
-            // In a real implementation, this would call the Adsgram SDK
-            Adsgram.showAd({
-                adUnitId: 'YOUR_ADSGRAM_UNIT_ID',
-                onReward: onComplete,
-                onError: (e) => {
-                    console.error('Adsgram error:', e);
-                    showToast('Ad failed to load. Please try again.', 'error');
-                }
-            });
-        }
-
-        // Start ad cooldown
-        function startAdCooldown(seconds) {
-            state.adCooldown = seconds;
-            state.lastAdWatch = new Date().toISOString();
-            saveState();
-            updateAdButtonState();
-            
-            const cooldownInterval = setInterval(() => {
-                state.adCooldown--;
-                updateAdButtonState();
-                
-                if (state.adCooldown <= 0) {
-                    clearInterval(cooldownInterval);
-                    state.adCooldown = 0;
-                    updateAdButtonState();
-                    saveState();
-                }
-            }, 1000);
-        }
-
-        // Credit user with tokens
-        function creditUser(amount, description) {
-            state.balance += amount;
-            
-            // Add transaction
-            state.transactions.unshift({
-                id: Date.now(),
-                type: 'ad',
-                amount: amount,
-                description: description,
-                date: new Date().toISOString()
-            });
-            
-            // Save state and update UI
-            saveState();
-            renderUI();
-            
-            // Animate balance update
-            animateBalanceUpdate();
-        }
-
-        // Animate balance update
-        function animateBalanceUpdate() {
-            const balanceEl = elements.balanceDisplay;
-            balanceEl.classList.add('balance-update');
-            
-            setTimeout(() => {
-                balanceEl.classList.remove('balance-update');
-            }, 500);
-        }
-
-        // Update task progress
-        function updateTaskProgress() {
-            const watchAdTask = state.tasks.find(t => t.id === 1);
-            if (watchAdTask) {
-                state.adsWatchedToday++;
-                watchAdTask.progress = state.adsWatchedToday;
-                
-                if (watchAdTask.progress >= watchAdTask.target) {
-                    watchAdTask.progress = 0;
-                    state.adsWatchedToday = 0;
-                    // In a real app, you might reward the user for completing the daily target
-                }
-                
+                // Save state and update UI
                 saveState();
                 renderTasks();
             }
         }
 
-        // Claim task reward
-        function claimTask(taskId) {
-            const task = state.tasks.find(t => t.id === taskId);
-            if (task && !task.completed) {
-                // For ad task, we've already handled it in completeAd
-                if (task.type === 'repeatable') {
-                    openAdModal();
-                    return;
-                }
-                
-                task.completed = true;
-                state.balance += task.reward;
-                
-                // Add transaction
-                state.transactions.unshift({
-                    id: Date.now(),
-                    type: 'task',
-                    amount: task.reward,
-                    description: `Task: ${task.title}`,
-                    date: new Date().toISOString()
-                });
-                
-                // Save state and update UI
-                saveState();
-                renderUI();
-                animateBalanceUpdate();
-                showToast(`You earned ${task.reward} ΠS for completing the task!`);
-                
-                // In a real implementation, you would call:
-                // fetch('/api/tasks/complete', { 
-                //   method: 'POST', 
-                //   body: JSON.stringify({ userId: state.user.id, taskId: task.id }) 
-                // })
-            }
+        // Render referral info
+        function renderReferralInfo() {
+            // Generate referral link
+            const referralLink = `https://t.me/YourBot?start=REF_${state.user.id}`;
+            elements.referralCode.textContent = referralLink;
+            elements.referralsCount.textContent = state.referrals.count;
+            elements.referralEarnings.textContent = `${state.referrals.earnings} ΠS`;
         }
 
-        // Copy referral code to clipboard
-        function copyReferralCode() {
-            navigator.clipboard.writeText(state.referrals.code)
+        // Copy referral link to clipboard
+        function copyReferralLink() {
+            const referralLink = `https://t.me/YourBot?start=REF_${state.user.id}`;
+            navigator.clipboard.writeText(referralLink)
                 .then(() => {
-                    showToast('Referral code copied to clipboard!');
+                    showToast('Referral link copied to clipboard!');
                 })
                 .catch(err => {
                     console.error('Failed to copy: ', err);
                     // Fallback for older browsers
                     const textArea = document.createElement('textarea');
-                    textArea.value = state.referrals.code;
+                    textArea.value = referralLink;
                     document.body.appendChild(textArea);
                     textArea.select();
                     document.execCommand('copy');
                     document.body.removeChild(textArea);
-                    showToast('Referral code copied to clipboard!');
+                    showToast('Referral link copied to clipboard!');
                 });
         }
 
         // Share on Telegram
         function shareOnTelegram() {
-            const text = `Join Pi Swap using my referral code: ${state.referrals.code}. Earn Pi tokens by completing simple tasks!`;
-            const url = `https://t.me/share/url?url=https://t.me/PiSwapBot?start=${state.referrals.code}&text=${encodeURIComponent(text)}`;
+            const referralLink = `https://t.me/YourBot?start=REF_${state.user.id}`;
+            const text = `Join Pi Swap using my referral link and earn Pi tokens! ${referralLink}`;
+            const url = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(text)}`;
             window.open(url, '_blank');
         }
 
