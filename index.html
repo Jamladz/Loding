@@ -6,7 +6,1064 @@
     <title>Pi Swap - Web3 Ecosystem</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/tonweb/dist/tonweb.js"></script>
-    <link rel="stylesheet" href="<% options.CSSFile %>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #f59e0b;
+            --success-color: #22c55e;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --background: #0f172a;
+            --surface: #1e293b;
+            --surface-light: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border-color: #334155;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--background);
+            color: var(--text-primary);
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        /* Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            display: flex;
+            padding: 12px 8px;
+            border-top: 1px solid var(--border-color);
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 4px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            opacity: 0.6;
+        }
+
+        .nav-item.active {
+            opacity: 1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            filter: brightness(0.8);
+        }
+
+        .nav-item span {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Screens */
+        .screen {
+            display: none;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Header */
+        .header {
+            margin-bottom: 24px;
+        }
+
+        .wallet-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: var(--surface);
+            border-radius: 12px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+        }
+
+        .status-indicator.connected {
+            background: var(--success-color);
+        }
+
+        .status-indicator.disconnected {
+            background: var(--danger-color);
+        }
+
+        .balance-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .balance-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            opacity: 0.9;
+        }
+
+        .balance-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .currency-symbol {
+            font-size: 1.5rem;
+            opacity: 0.8;
+        }
+
+        .balance-subtitle {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            border: none;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .action-btn.primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .action-btn.secondary {
+            background: var(--surface);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .action-btn.shop-btn {
+            background: linear-gradient(135deg, var(--secondary-color), #d97706);
+            color: white;
+        }
+
+        .btn-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        .timer-badge {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-left: auto;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--surface);
+            padding: 16px 12px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Quick Actions */
+        .quick-actions h3 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .quick-action {
+            background: var(--surface);
+            padding: 16px 12px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+
+        .quick-action:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .action-icon {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 8px;
+        }
+
+        /* Tasks Screen */
+        .screen-header {
+            margin-bottom: 24px;
+        }
+
+        .screen-header h2 {
+            margin-bottom: 12px;
+            font-size: 1.5rem;
+        }
+
+        .tasks-progress {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--surface-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar.large {
+            height: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Tasks List */
+        .tasks-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .task-item {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--border-color);
+        }
+
+        .task-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .task-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 10px;
+        }
+
+        .task-details h4 {
+            margin-bottom: 4px;
+            font-size: 1rem;
+        }
+
+        .task-details p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .task-reward {
+            font-size: 0.8rem;
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .task-status {
+            flex-shrink: 0;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-badge.completed {
+            background: rgba(34, 197, 94, 0.1);
+            color: var(--success-color);
+        }
+
+        .status-badge.pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning-color);
+        }
+
+        .status-badge.disconnected {
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--danger-color);
+        }
+
+        .task-action-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 80px;
+        }
+
+        .task-action-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .cooldown-timer {
+            font-size: 0.7rem;
+            margin-top: 4px;
+        }
+
+        /* Airdrop Screen */
+        .airdrop-info {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 16px;
+        }
+
+        .airdrop-total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+        }
+
+        .airdrop-card {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .airdrop-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .airdrop-badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .points-breakdown {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .points-breakdown h4 {
+            margin-bottom: 16px;
+        }
+
+        .points-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .point-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .point-item:last-child {
+            border-bottom: none;
+        }
+
+        .verify-section {
+            text-align: center;
+        }
+
+        .verify-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+
+        .verify-note {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Profile Screen */
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .user-avatar-large {
+            position: relative;
+        }
+
+        .user-avatar-large img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid var(--primary-color);
+        }
+
+        .premium-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background: var(--secondary-color);
+            color: #1e293b;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .user-info h2 {
+            margin-bottom: 4px;
+        }
+
+        .user-info p {
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .tier-badge {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .profile-stats {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .profile-stat {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 12px 0;
+        }
+
+        .profile-stat:not(:last-child) {
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .stat-icon {
+            font-size: 1.5rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 10px;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .settings-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .setting-item {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--border-color);
+        }
+
+        .setting-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .setting-icon {
+            font-size: 1.25rem;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 10px;
+        }
+
+        .setting-info h4 {
+            margin-bottom: 2px;
+            font-size: 1rem;
+        }
+
+        .setting-info p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Bottom Sheet */
+        .bottom-sheet {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-radius: 20px 20px 0 0;
+            z-index: 2000;
+            transition: bottom 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .bottom-sheet.active {
+            bottom: 80px;
+        }
+
+        .sheet-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .sheet-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sheet-content {
+            padding: 20px;
+        }
+
+        .wallet-info-sheet {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .wallet-balance {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .wallet-address {
+            font-family: monospace;
+            font-size: 0.8rem;
+            word-break: break-all;
+            color: var(--text-secondary);
+        }
+
+        .buy-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .buy-option {
+            background: var(--background);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s ease;
+        }
+
+        .buy-option.featured {
+            border-color: var(--primary-color);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .option-amount {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .option-price {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .option-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .buy-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        .buy-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        .payment-info {
+            background: var(--background);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--surface);
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .modal-content.small {
+            max-width: 320px;
+        }
+
+        @keyframes modalSlideIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .modal-footer {
+            padding: 20px;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+            color: var(--text-primary);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        /* Overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1500;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* KYC Styles */
+        .kyc-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .kyc-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            background: var(--background);
+            opacity: 0.6;
+        }
+
+        .kyc-step.active {
+            opacity: 1;
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .step-info h4 {
+            margin-bottom: 2px;
+            font-size: 1rem;
+        }
+
+        .step-info p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .kyc-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            background: var(--background);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 1rem;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Coming Soon */
+        .coming-soon-content {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .soon-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        /* Transaction Modal */
+        .transaction-details {
+            background: var(--background);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+        }
+
+        .transaction-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .transaction-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .transaction-status {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .screen {
+                padding: 16px;
+            }
+            
+            .balance-amount {
+                font-size: 2rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            
+            .action-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+            }
+            
+            .task-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            
+            .task-status {
+                align-self: stretch;
+            }
+            
+            .task-action-btn {
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Main Navigation -->
@@ -519,6 +1576,672 @@
     <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
 
-<script src="<% options.JSFile %>"></script>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.disableVerticalSwipes();
+        tg.enableClosingConfirmation();
+        tg.setHeaderColor('#0f172a');
+        tg.setBackgroundColor('#1e293b');
+        tg.setBottomBarColor('#1e293b');
+
+        // App State
+        let userData = {
+            piBalance: 0,
+            totalEarned: 0,
+            tasksCompleted: 0,
+            airdropPoints: 0,
+            lastClaim: null,
+            lastAdWatch: null,
+            joinedChannel: false,
+            kycVerified: false,
+            walletConnected: false,
+            tonBalance: 0,
+            walletAddress: null,
+            airdropTier: 'Bronze',
+            referralCount: 0
+        };
+
+        // TON Wallet Configuration
+        const RECIPIENT_WALLET = 'UQCTZAMbXoN5T43K9gJXH8GYWBmIstXrUrdoV9kv3btN1Ad3';
+
+        class TONWalletManager {
+            constructor() {
+                this.provider = null;
+                this.isConnected = false;
+                this.address = null;
+                this.balance = 0;
+                this.init();
+            }
+
+            init() {
+                this.detectWallet();
+                this.loadWalletState();
+            }
+
+            detectWallet() {
+                if (window.tonkeeper) {
+                    this.provider = 'tonkeeper';
+                } else if (window.tonwallet) {
+                    this.provider = 'tonwallet';
+                } else if (tg?.initDataUnsafe?.user) {
+                    this.provider = 'telegram';
+                }
+            }
+
+            loadWalletState() {
+                const saved = localStorage.getItem('ton_wallet_state');
+                if (saved) {
+                    const state = JSON.parse(saved);
+                    this.isConnected = state.isConnected;
+                    this.address = state.address;
+                    this.balance = state.balance;
+                    this.updateUI();
+                }
+            }
+
+            saveWalletState() {
+                const state = {
+                    isConnected: this.isConnected,
+                    address: this.address,
+                    balance: this.balance
+                };
+                localStorage.setItem('ton_wallet_state', JSON.stringify(state));
+            }
+
+            async connect() {
+                return new Promise((resolve, reject) => {
+                    if (this.provider === 'telegram' && tg.platform !== 'unknown') {
+                        tg.openInvoice('https://t.me/piswapbot/invoice/connect', (status) => {
+                            if (status === 'paid') {
+                                this.isConnected = true;
+                                this.address = 'Telegram Built-in Wallet';
+                                this.balance = Math.random() * 10;
+                                this.saveWalletState();
+                                this.updateUI();
+                                resolve(true);
+                            } else {
+                                reject(new Error('Connection cancelled'));
+                            }
+                        });
+                    } else {
+                        // Simulate wallet connection
+                        setTimeout(() => {
+                            this.isConnected = true;
+                            this.address = 'EQC' + Math.random().toString(36).substr(2, 48);
+                            this.balance = (Math.random() * 15).toFixed(4);
+                            this.saveWalletState();
+                            this.updateUI();
+                            resolve(true);
+                        }, 2000);
+                    }
+                });
+            }
+
+            disconnect() {
+                this.isConnected = false;
+                this.address = null;
+                this.balance = 0;
+                this.saveWalletState();
+                this.updateUI();
+            }
+
+            async sendTransaction(amount) {
+                return new Promise((resolve, reject) => {
+                    if (!this.isConnected) {
+                        reject(new Error('Wallet not connected'));
+                        return;
+                    }
+
+                    if (this.balance < amount) {
+                        reject(new Error('Insufficient balance'));
+                        return;
+                    }
+
+                    // Simulate transaction
+                    setTimeout(() => {
+                        if (Math.random() > 0.1) { // 90% success rate
+                            this.balance -= amount;
+                            this.saveWalletState();
+                            this.updateUI();
+                            resolve({
+                                hash: '0x' + Math.random().toString(36).substr(2, 64),
+                                success: true
+                            });
+                        } else {
+                            reject(new Error('Transaction failed'));
+                        }
+                    }, 3000);
+                });
+            }
+
+            updateUI() {
+                // Update wallet status
+                const statusElement = document.getElementById('walletStatus');
+                const statusProfile = document.getElementById('walletStatusProfile');
+                const sheetBalance = document.getElementById('sheetTonBalance');
+                const sheetAddress = document.getElementById('sheetWalletAddress');
+
+                if (this.isConnected) {
+                    statusElement.innerHTML = `
+                        <div class="status-indicator connected"></div>
+                        <span>TON Wallet Connected</span>
+                    `;
+                    statusProfile.textContent = 'Connected';
+                    statusProfile.className = 'status-badge completed';
+                    sheetBalance.textContent = `${this.balance} TON`;
+                    sheetAddress.textContent = this.address;
+                } else {
+                    statusElement.innerHTML = `
+                        <div class="status-indicator disconnected"></div>
+                        <span>TON Wallet Not Connected</span>
+                    `;
+                    statusProfile.textContent = 'Not Connected';
+                    statusProfile.className = 'status-badge disconnected';
+                    sheetBalance.textContent = '0 TON';
+                    sheetAddress.textContent = 'Not connected';
+                }
+            }
+        }
+
+        // Initialize TON Wallet
+        const tonWallet = new TONWalletManager();
+
+        // Load user data from localStorage
+        function loadUserData() {
+            const saved = localStorage.getItem('pi_swap_user_data');
+            if (saved) {
+                userData = { ...userData, ...JSON.parse(saved) };
+            }
+            updateUI();
+        }
+
+        // Save user data to localStorage
+        function saveUserData() {
+            localStorage.setItem('pi_swap_user_data', JSON.stringify(userData));
+        }
+
+        // Update all UI elements
+        function updateUI() {
+            // Update balances
+            document.getElementById('piBalance').textContent = userData.piBalance;
+            document.getElementById('totalEarned').textContent = userData.totalEarned;
+            document.getElementById('tasksCompleted').textContent = userData.tasksCompleted;
+            document.getElementById('airdropPoints').textContent = userData.airdropPoints;
+            document.getElementById('airdropTotalPoints').textContent = userData.airdropPoints;
+
+            // Update profile
+            document.getElementById('profilePiBalance').textContent = userData.piBalance + ' π';
+            document.getElementById('profileTotalEarned').textContent = userData.totalEarned + ' π';
+            document.getElementById('profileTasksDone').textContent = userData.tasksCompleted;
+
+            // Update airdrop
+            document.getElementById('airdropTier').textContent = userData.airdropTier;
+            updateAirdropProgress();
+            updatePointsBreakdown();
+
+            // Update task statuses
+            updateTaskStatuses();
+            updateClaimTimer();
+
+            // Update KYC status
+            const kycStatus = document.getElementById('kycStatus');
+            kycStatus.textContent = userData.kycVerified ? 'Verified' : 'Not Verified';
+            kycStatus.className = userData.kycVerified ? 'status-badge completed' : 'status-badge pending';
+
+            // Update channel status
+            const channelStatus = document.getElementById('channelStatus');
+            channelStatus.textContent = userData.joinedChannel ? 'Joined' : 'Not Joined';
+            channelStatus.className = userData.joinedChannel ? 'status-badge completed' : 'status-badge pending';
+        }
+
+        function updateAirdropProgress() {
+            const progressBar = document.getElementById('airdropProgress');
+            let progress = 0;
+
+            if (userData.airdropPoints >= 1000) {
+                userData.airdropTier = 'Gold';
+                progress = 100;
+            } else if (userData.airdropPoints >= 500) {
+                userData.airdropTier = 'Silver';
+                progress = 66;
+            } else if (userData.airdropPoints >= 100) {
+                userData.airdropTier = 'Bronze';
+                progress = 33;
+            } else {
+                progress = (userData.airdropPoints / 100) * 33;
+            }
+
+            progressBar.style.width = progress + '%';
+            document.getElementById('airdropTier').textContent = userData.airdropTier;
+        }
+
+        function updatePointsBreakdown() {
+            document.getElementById('pointsDaily').textContent = Math.min(userData.tasksCompleted * 2, 50) + ' points';
+            document.getElementById('pointsTasks').textContent = userData.tasksCompleted * 10 + ' points';
+            document.getElementById('pointsKYC').textContent = (userData.kycVerified ? 200 : 0) + ' points';
+            document.getElementById('pointsChannel').textContent = (userData.joinedChannel ? 100 : 0) + ' points';
+            document.getElementById('pointsReferrals').textContent = userData.referralCount * 50 + ' points';
+        }
+
+        function updateTaskStatuses() {
+            const now = Date.now();
+            const dailyClaimStatus = document.getElementById('dailyClaimStatus');
+            const watchAdBtn = document.getElementById('watchAdBtn');
+            const joinChannelBtn = document.getElementById('joinChannelBtn');
+            const kycBtn = document.getElementById('kycBtn');
+
+            // Daily claim status
+            if (userData.lastClaim && (now - userData.lastClaim) < 24 * 60 * 60 * 1000) {
+                dailyClaimStatus.textContent = 'Completed';
+                dailyClaimStatus.className = 'status-badge completed';
+            } else {
+                dailyClaimStatus.textContent = 'Available';
+                dailyClaimStatus.className = 'status-badge pending';
+            }
+
+            // Ad watch status
+            if (userData.lastAdWatch && (now - userData.lastAdWatch) < 30 * 60 * 1000) {
+                watchAdBtn.disabled = true;
+                const remaining = Math.ceil((30 * 60 * 1000 - (now - userData.lastAdWatch)) / 1000 / 60);
+                watchAdBtn.querySelector('.cooldown-timer').textContent = `${remaining}m`;
+                watchAdBtn.querySelector('.cooldown-timer').style.display = 'block';
+                watchAdBtn.querySelector('span').style.display = 'none';
+            } else {
+                watchAdBtn.disabled = false;
+                watchAdBtn.querySelector('.cooldown-timer').style.display = 'none';
+                watchAdBtn.querySelector('span').style.display = 'block';
+            }
+
+            // Channel join status
+            if (userData.joinedChannel) {
+                joinChannelBtn.disabled = true;
+                joinChannelBtn.textContent = 'Joined';
+            }
+
+            // KYC status
+            if (userData.kycVerified) {
+                kycBtn.disabled = true;
+                kycBtn.textContent = 'Verified';
+            }
+        }
+
+        function updateClaimTimer() {
+            const claimTimer = document.getElementById('claimTimer');
+            const nextClaim = document.getElementById('nextClaim');
+            const now = Date.now();
+
+            if (userData.lastClaim && (now - userData.lastClaim) < 24 * 60 * 60 * 1000) {
+                const remaining = 24 * 60 * 60 * 1000 - (now - userData.lastClaim);
+                const hours = Math.floor(remaining / (60 * 60 * 1000));
+                const minutes = Math.floor((remaining % (60 * 60 * 1000)) / (60 * 1000));
+                
+                claimTimer.textContent = `${hours}h ${minutes}m`;
+                claimTimer.style.display = 'block';
+                nextClaim.textContent = `Next claim in ${hours}h ${minutes}m`;
+            } else {
+                claimTimer.style.display = 'none';
+                nextClaim.textContent = 'Claim available now!';
+            }
+        }
+
+        // Core Functions
+        function claimDailyReward() {
+            const now = Date.now();
+            
+            if (userData.lastClaim && (now - userData.lastClaim) < 24 * 60 * 60 * 1000) {
+                showNotification('Please wait 24 hours before claiming again', 'error');
+                return;
+            }
+
+            userData.piBalance += 10;
+            userData.totalEarned += 10;
+            userData.tasksCompleted += 1;
+            userData.airdropPoints += 2;
+            userData.lastClaim = now;
+
+            saveUserData();
+            updateUI();
+            showNotification('Successfully claimed 10 π!', 'success');
+        }
+
+        function watchAdvertisement() {
+            const now = Date.now();
+            
+            if (userData.lastAdWatch && (now - userData.lastAdWatch) < 30 * 60 * 1000) {
+                showNotification('Please wait 30 minutes before watching another ad', 'error');
+                return;
+            }
+
+            // Simulate ad watching
+            showNotification('Loading advertisement...', 'warning');
+            
+            setTimeout(() => {
+                userData.piBalance += 1;
+                userData.totalEarned += 1;
+                userData.tasksCompleted += 1;
+                userData.airdropPoints += 1;
+                userData.lastAdWatch = now;
+
+                saveUserData();
+                updateUI();
+                showNotification('+1 π earned from advertisement!', 'success');
+            }, 3000);
+        }
+
+        function joinTelegramChannel() {
+            if (userData.joinedChannel) {
+                showNotification('You have already joined the channel', 'info');
+                return;
+            }
+
+            tg.openTelegramLink('https://t.me/piswapchannel');
+            
+            // Simulate channel join verification
+            setTimeout(() => {
+                userData.piBalance += 50;
+                userData.totalEarned += 50;
+                userData.tasksCompleted += 1;
+                userData.airdropPoints += 100;
+                userData.joinedChannel = true;
+
+                saveUserData();
+                updateUI();
+                showNotification('+50 π for joining our channel!', 'success');
+            }, 2000);
+        }
+
+        function startKYCVerification() {
+            if (userData.kycVerified) {
+                showNotification('KYC already verified', 'info');
+                return;
+            }
+
+            openKYCModal();
+        }
+
+        function completeKYC() {
+            userData.piBalance += 100;
+            userData.totalEarned += 100;
+            userData.tasksCompleted += 1;
+            userData.airdropPoints += 200;
+            userData.kycVerified = true;
+
+            saveUserData();
+            updateUI();
+            closeKYCModal();
+            showNotification('KYC verified successfully! +100 π', 'success');
+        }
+
+        async function buyPiSwap(amount, price) {
+            if (!tonWallet.isConnected) {
+                showNotification('Please connect your TON wallet first', 'error');
+                return;
+            }
+
+            if (tonWallet.balance < price) {
+                showNotification('Insufficient TON balance', 'error');
+                return;
+            }
+
+            // Show transaction modal
+            const modal = document.getElementById('transactionModal');
+            const tonAmount = document.getElementById('transactionTonAmount');
+            const piAmount = document.getElementById('transactionPiAmount');
+            const status = document.getElementById('transactionStatus');
+
+            tonAmount.textContent = price + ' TON';
+            piAmount.textContent = amount + ' π';
+            status.textContent = 'Initializing transaction...';
+            openModal('transactionModal');
+
+            try {
+                status.textContent = 'Processing transaction...';
+                
+                // Simulate transaction processing
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                const transaction = await tonWallet.sendTransaction(price);
+                
+                if (transaction.success) {
+                    status.textContent = 'Transaction completed successfully!';
+                    
+                    // Add Pi Swap tokens to user balance
+                    userData.piBalance += amount;
+                    userData.totalEarned += amount;
+                    
+                    saveUserData();
+                    updateUI();
+                    
+                    setTimeout(() => {
+                        closeModal('transactionModal');
+                        closeShopSheet();
+                        showNotification(`Successfully purchased ${amount} π!`, 'success');
+                    }, 2000);
+                }
+            } catch (error) {
+                status.textContent = `Transaction failed: ${error.message}`;
+                setTimeout(() => {
+                    closeModal('transactionModal');
+                }, 3000);
+            }
+        }
+
+        function verifyAirdrop() {
+            showComingSoon();
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'error' ? '#ef4444' : type === 'warning' ? '#f59e0b' : '#22c55e'};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 12px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                z-index: 4000;
+                animation: slideInRight 0.3s ease;
+            `;
+            notification.textContent = message;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Modal Management
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        function openKYCModal() {
+            openModal('kycModal');
+        }
+
+        function closeKYCModal() {
+            closeModal('kycModal');
+        }
+
+        function openShopSheet() {
+            document.getElementById('shopSheet').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function closeShopSheet() {
+            document.getElementById('shopSheet').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        function showComingSoon() {
+            openModal('comingSoonModal');
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize app
+            loadUserData();
+            loadUserProfile();
+
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const page = this.getAttribute('data-page');
+                    
+                    // Update active nav item
+                    document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding screen
+                    document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+                    document.getElementById(page + 'Screen').classList.add('active');
+                });
+            });
+
+            // Wallet connection
+            document.getElementById('connectWalletBtn').addEventListener('click', async () => {
+                try {
+                    await tonWallet.connect();
+                    userData.walletConnected = true;
+                    saveUserData();
+                    showNotification('TON wallet connected successfully!', 'success');
+                } catch (error) {
+                    showNotification('Failed to connect wallet: ' + error.message, 'error');
+                }
+            });
+
+            // Daily claim
+            document.getElementById('dailyClaimBtn').addEventListener('click', claimDailyReward);
+
+            // Shop
+            document.getElementById('openShopBtn').addEventListener('click', openShopSheet);
+            document.getElementById('closeShopBtn').addEventListener('click', closeShopSheet);
+
+            // Buy buttons
+            document.querySelectorAll('.buy-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const amount = parseInt(this.getAttribute('data-amount'));
+                    const option = this.closest('.buy-option');
+                    const price = parseFloat(option.getAttribute('data-price'));
+                    buyPiSwap(amount, price);
+                });
+            });
+
+            // Tasks
+            document.getElementById('watchAdBtn').addEventListener('click', watchAdvertisement);
+            document.getElementById('joinChannelBtn').addEventListener('click', joinTelegramChannel);
+            document.getElementById('kycBtn').addEventListener('click', startKYCVerification);
+            document.getElementById('inviteBtn').addEventListener('click', showComingSoon);
+
+            // Quick actions
+            document.querySelectorAll('.quick-action').forEach(action => {
+                action.addEventListener('click', function() {
+                    const actionType = this.getAttribute('data-action');
+                    switch(actionType) {
+                        case 'watchAd':
+                            watchAdvertisement();
+                            break;
+                        case 'invite':
+                            showComingSoon();
+                            break;
+                        case 'kyc':
+                            startKYCVerification();
+                            break;
+                    }
+                });
+            });
+
+            // KYC Modal
+            document.getElementById('submitKycBtn').addEventListener('click', completeKYC);
+            document.getElementById('cancelKycBtn').addEventListener('click', closeKYCModal);
+            document.getElementById('closeKycBtn').addEventListener('click', closeKYCModal);
+
+            // Transaction Modal
+            document.getElementById('cancelTransactionBtn').addEventListener('click', () => closeModal('transactionModal'));
+            document.getElementById('confirmTransactionBtn').addEventListener('click', () => {
+                // Transaction confirmation is handled in buyPiSwap function
+            });
+
+            // Coming Soon Modal
+            document.getElementById('closeSoonBtn').addEventListener('click', () => closeModal('comingSoonModal'));
+
+            // Airdrop verify
+            document.getElementById('verifyAirdropBtn').addEventListener('click', verifyAirdrop);
+
+            // Overlay click
+            document.getElementById('overlay').addEventListener('click', function() {
+                closeShopSheet();
+                closeModal('kycModal');
+                closeModal('transactionModal');
+                closeModal('comingSoonModal');
+            });
+
+            // KYC Setting click
+            document.getElementById('kycSetting').addEventListener('click', startKYCVerification);
+        });
+
+        function loadUserProfile() {
+            const nameElement = document.getElementById('profileName');
+            const usernameElement = document.getElementById('profileUsername');
+            const avatarElement = document.getElementById('profileAvatar');
+            const premiumBadge = document.getElementById('profilePremiumBadge');
+
+            nameElement.textContent = 'User';
+            usernameElement.textContent = '@user';
+            avatarElement.src = 'https://cdn-icons-png.flaticon.com/512/149/149071.png';
+
+            if (tg.initDataUnsafe.user) {
+                const user = tg.initDataUnsafe.user;
+                const userName = `${user.first_name || ''} ${user.last_name || ''}`.trim();
+                if (userName) nameElement.textContent = userName;
+                
+                if (user.username) {
+                    usernameElement.textContent = '@' + user.username;
+                }
+                
+                if (user.photo_url) {
+                    avatarElement.src = user.photo_url;
+                }
+
+                if (user.is_premium) {
+                    premiumBadge.style.display = 'block';
+                }
+            }
+        }
+
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideInRight {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            
+            @keyframes slideOutRight {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100%); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Initialize timers
+        setInterval(updateClaimTimer, 60000); // Update every minute
+        setInterval(updateTaskStatuses, 1000); // Update every second for cooldown timers
+    </script>
 </body>
 </html>
