@@ -2,1943 +2,523 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pi Swap</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #0088cc;
-            --primary-light: #2aabee;
-            --primary-dark: #006699;
-            --background: #ffffff;
-            --surface: #f8f9fa;
-            --card: #ffffff;
-            --text: #212529;
-            --text-secondary: #6c757d;
-            --border: #dee2e6;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            --shadow-light: 0 2px 8px rgba(0, 0, 0, 0.05);
-            --radius: 16px;
-            --radius-sm: 8px;
-            --transition: all 0.3s ease;
-            --glass: rgba(255, 255, 255, 0.8);
-            --glass-border: rgba(255, 255, 255, 0.2);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(135deg, #e6f7ff, #f0f9ff);
-            color: var(--text);
-            line-height: 1.6;
-            overflow-x: hidden;
-            min-height: 100vh;
-        }
-
-        .app-container {
-            max-width: 480px;
-            margin: 0 auto;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            background: var(--background);
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-        }
-
-        /* Header Styles */
-        .header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            padding: 20px 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-weight: 700;
-            font-size: 1.5rem;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.2);
-            padding: 8px 12px;
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-        }
-
-        /* Bottom Navigation */
-        .bottom-nav {
-            display: flex;
-            background: var(--card);
-            border-top: 1px solid var(--border);
-            position: sticky;
-            bottom: 0;
-            z-index: 99;
-            padding: 8px 0;
-            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-        }
-
-        .nav-item {
-            flex: 1;
-            text-align: center;
-            padding: 10px 0;
-            font-size: 0.75rem;
-            color: var(--text-secondary);
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .nav-item i {
-            font-size: 1.2rem;
-            transition: var(--transition);
-        }
-
-        .nav-item.active {
-            color: var(--primary);
-        }
-
-        .nav-item.active i {
-            transform: translateY(-2px);
-        }
-
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 20px 16px;
-            overflow-y: auto;
-            background: var(--surface);
-        }
-
-        .page {
-            display: none;
-            animation: fadeIn 0.4s ease;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Card Styles */
-        .card {
-            background: var(--card);
-            border-radius: var(--radius);
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: var(--shadow-light);
-            border: 1px solid var(--glass-border);
-            backdrop-filter: blur(10px);
-            transition: var(--transition);
-        }
-
-        .card:hover {
-            box-shadow: var(--shadow);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-
-        /* Button Styles */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 14px 28px;
-            border: none;
-            border-radius: var(--radius);
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-            text-decoration: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-            transition: 0.5s;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 136, 204, 0.4);
-        }
-
-        .btn-secondary {
-            background: var(--surface);
-            color: var(--text);
-            border: 1px solid var(--border);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, var(--success), #20c997);
-            color: white;
-            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
-        }
-
-        .btn-warning {
-            background: linear-gradient(135deg, var(--warning), #ffd54f);
-            color: var(--text);
-            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.3);
-        }
-
-        .btn-block {
-            width: 100%;
-        }
-
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none !important;
-            box-shadow: none !important;
-        }
-
-        /* Balance Display */
-        .balance-display {
-            text-align: center;
-            padding: 20px 0;
-        }
-
-        .balance-amount {
-            font-size: 3.5rem;
-            font-weight: 700;
-            margin: 10px 0;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-
-        .coin-icon {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #ffd700, #ffa500);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-            box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4);
-            animation: coinGlow 2s infinite alternate;
-        }
-
-        @keyframes coinGlow {
-            from { box-shadow: 0 4px 15px rgba(255, 193, 7, 0.4); }
-            to { box-shadow: 0 4px 20px rgba(255, 193, 7, 0.7); }
-        }
-
-        .balance-label {
-            color: var(--text-secondary);
-            font-size: 1rem;
-        }
-
-        /* Welcome Section */
-        .welcome-section {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .welcome-text {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            color: var(--text);
-        }
-
-        .username {
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        /* Mining Section */
-        .mining-section {
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        .mining-timer {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .timer-text {
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        /* Ad Section */
-        .ad-section {
-            text-align: center;
-            margin: 30px 0;
-        }
-
-        .ad-timer {
-            margin-top: 15px;
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        /* Transactions */
-        .transaction-list {
-            list-style: none;
-        }
-
-        .transaction-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 0;
-            border-bottom: 1px solid var(--border);
-            transition: var(--transition);
-        }
-
-        .transaction-item:hover {
-            background: rgba(0, 0, 0, 0.02);
-            border-radius: var(--radius-sm);
-            padding-left: 10px;
-            padding-right: 10px;
-        }
-
-        .transaction-item:last-child {
-            border-bottom: none;
-        }
-
-        .transaction-icon {
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 16px;
-            background: rgba(0, 136, 204, 0.1);
-            color: var(--primary);
-        }
-
-        .transaction-details {
-            flex: 1;
-        }
-
-        .transaction-title {
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .transaction-date {
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-        }
-
-        .transaction-amount {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .transaction-amount.positive {
-            color: var(--success);
-        }
-
-        /* Tasks */
-        .task-item {
-            display: flex;
-            align-items: center;
-            padding: 20px 0;
-            border-bottom: 1px solid var(--border);
-            transition: var(--transition);
-        }
-
-        .task-item:hover {
-            transform: translateX(5px);
-        }
-
-        .task-item:last-child {
-            border-bottom: none;
-        }
-
-        .task-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
-            background: var(--surface);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 20px;
-            color: var(--primary);
-            font-size: 1.3rem;
-            box-shadow: var(--shadow-light);
-        }
-
-        .task-details {
-            flex: 1;
-        }
-
-        .task-title {
-            font-weight: 600;
-            margin-bottom: 6px;
-        }
-
-        .task-description {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .task-progress {
-            font-size: 0.85rem;
-            color: var(--primary);
-            margin-top: 6px;
-            font-weight: 500;
-        }
-
-        .task-reward {
-            font-weight: 700;
-            color: var(--primary);
-            margin-right: 16px;
-            font-size: 1.1rem;
-        }
-
-        .task-status {
-            font-size: 0.8rem;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-
-        .status-available {
-            background: rgba(40, 167, 69, 0.1);
-            color: var(--success);
-        }
-
-        .status-completed {
-            background: rgba(108, 117, 125, 0.1);
-            color: var(--text-secondary);
-        }
-
-        .status-waiting {
-            background: rgba(255, 193, 7, 0.1);
-            color: var(--warning);
-        }
-
-        /* Referral */
-        .referral-code {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-            padding: 20px;
-            border-radius: var(--radius);
-            text-align: center;
-            margin: 25px 0;
-            font-size: 1.6rem;
-            font-weight: 700;
-            letter-spacing: 1px;
-            box-shadow: var(--shadow);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .referral-code::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-            transform: rotate(45deg);
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%) rotate(45deg); }
-            100% { transform: translateX(100%) rotate(45deg); }
-        }
-
-        .referral-stats {
-            display: flex;
-            justify-content: space-around;
-            text-align: center;
-            margin: 25px 0;
-        }
-
-        .stat-item {
-            flex: 1;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        .share-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 25px;
-        }
-
-        .share-btn {
-            flex: 1;
-            justify-content: center;
-        }
-
-        /* Wallet */
-        .withdraw-form {
-            margin-top: 20px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 14px;
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            font-size: 1rem;
-            transition: var(--transition);
-            background: var(--surface);
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.2);
-        }
-
-        .disclaimer {
-            margin-top: 25px;
-            padding: 16px;
-            background: rgba(255, 193, 7, 0.1);
-            border-radius: var(--radius);
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-            text-align: center;
-            border-left: 4px solid var(--warning);
-        }
-
-        /* Modal Styles */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-            padding: 20px;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-            backdrop-filter: blur(5px);
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal {
-            background: var(--card);
-            border-radius: var(--radius);
-            width: 100%;
-            max-width: 420px;
-            overflow: hidden;
-            transform: translateY(30px) scale(0.9);
-            transition: var(--transition);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-            border: 1px solid var(--glass-border);
-        }
-
-        .modal-overlay.active .modal {
-            transform: translateY(0) scale(1);
-        }
-
-        .modal-header {
-            padding: 20px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            color: white;
-        }
-
-        .modal-title {
-            font-weight: 600;
-            font-size: 1.3rem;
-        }
-
-        .modal-close {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: white;
-            font-size: 1.2rem;
-            transition: var(--transition);
-        }
-
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: rotate(90deg);
-        }
-
-        .modal-body {
-            padding: 25px;
-        }
-
-        .modal-footer {
-            padding: 20px;
-            border-top: 1px solid var(--border);
-            display: flex;
-            gap: 12px;
-        }
-
-        /* Ad Modal */
-        .ad-container {
-            text-align: center;
-            padding: 20px 0;
-        }
-
-        .ad-placeholder {
-            width: 100%;
-            height: 220px;
-            background: var(--surface);
-            border-radius: var(--radius);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 20px;
-            font-size: 1.3rem;
-            color: var(--text-secondary);
-            border: 2px dashed var(--border);
-        }
-
-        .countdown {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--primary);
-            margin: 20px 0;
-        }
-
-        .progress-bar {
-            height: 8px;
-            background: var(--border);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 25px 0;
-        }
-
-        .progress {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--primary-light));
-            width: 0%;
-            transition: width 0.1s linear;
-        }
-
-        /* Toast */
-        .toast {
-            position: fixed;
-            bottom: 80px;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--success);
-            color: white;
-            padding: 14px 28px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            z-index: 1001;
-            opacity: 0;
-            transition: var(--transition);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .toast.active {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .toast.error {
-            background: var(--danger);
-        }
-
-        /* Loading Splash */
-        .splash-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 2000;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
-        }
-
-        .splash-logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-
-        .splash-icon {
-            width: 70px;
-            height: 70px;
-            background: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--primary);
-            font-weight: bold;
-            font-size: 2rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .splash-text {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: white;
-        }
-
-        .loading-bar {
-            width: 200px;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.3);
-            border-radius: 2px;
-            overflow: hidden;
-        }
-
-        .loading-progress {
-            height: 100%;
-            width: 0%;
-            background: white;
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
-
-        /* Responsive */
-        @media (max-width: 480px) {
-            .app-container {
-                box-shadow: none;
-            }
-            
-            .balance-amount {
-                font-size: 2.8rem;
-            }
-            
-            .share-buttons {
-                flex-direction: column;
-            }
-            
-            .modal {
-                max-width: 100%;
-            }
-        }
-
-        /* Animation for balance update */
-        @keyframes balanceBounce {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(1); }
-        }
-
-        .balance-update {
-            animation: balanceBounce 0.5s ease;
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
+    <title>Pi Swap - Web3 Ecosystem</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://unpkg.com/tonweb/dist/tonweb.js"></script>
+    <link rel="stylesheet" href="<% options.CSSFile %>">
 </head>
 <body>
-    <!-- Splash Screen -->
-    <div class="splash-screen" id="splash-screen">
-        <div class="splash-logo">
-            <div class="splash-icon">Π</div>
-            <div class="splash-text">Pi Swap</div>
+    <!-- Main Navigation -->
+    <nav class="bottom-nav">
+        <div class="nav-item active" data-page="home">
+            <img src="https://img.icons8.com/ios/50/home-page.png" class="nav-icon">
+            <span>Home</span>
         </div>
-        <div class="loading-bar">
-            <div class="loading-progress" id="loading-progress"></div>
+        <div class="nav-item" data-page="tasks">
+            <img src="https://img.icons8.com/ios/50/task.png" class="nav-icon">
+            <span>Tasks</span>
+        </div>
+        <div class="nav-item" data-page="airdrop">
+            <img src="https://img.icons8.com/ios/50/gift.png" class="nav-icon">
+            <span>Airdrop</span>
+        </div>
+        <div class="nav-item" data-page="profile">
+            <img src="https://img.icons8.com/ios/50/user.png" class="nav-icon">
+            <span>Profile</span>
+        </div>
+    </nav>
+
+    <!-- Home Screen -->
+    <div id="homeScreen" class="screen active">
+        <div class="header">
+            <div class="wallet-status" id="walletStatus">
+                <div class="status-indicator disconnected"></div>
+                <span>TON Wallet Not Connected</span>
+            </div>
+            <div class="balance-card">
+                <div class="balance-header">
+                    <img src="https://img.icons8.com/ios/50/pi.png" class="balance-icon">
+                    <span>Pi Swap Balance</span>
+                </div>
+                <div class="balance-amount">
+                    <span id="piBalance">0</span>
+                    <span class="currency-symbol">π</span>
+                </div>
+                <div class="balance-subtitle" id="nextClaim">Claim available now!</div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="action-btn primary" id="connectWalletBtn">
+                <img src="https://img.icons8.com/ios/50/blockchain-technology.png" class="btn-icon">
+                <span>Connect TON Wallet</span>
+            </button>
+            
+            <button class="action-btn secondary" id="dailyClaimBtn">
+                <img src="https://img.icons8.com/ios/50/coins.png" class="btn-icon">
+                <span>Claim 10 π</span>
+                <div class="timer-badge" id="claimTimer" style="display:none">24h</div>
+            </button>
+
+            <button class="action-btn shop-btn" id="openShopBtn">
+                <img src="https://img.icons8.com/ios/50/shop.png" class="btn-icon">
+                <span>Buy Pi Swap</span>
+            </button>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value" id="totalEarned">0</div>
+                <div class="stat-label">Total Earned</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="tasksCompleted">0</div>
+                <div class="stat-label">Tasks Done</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="airdropPoints">0</div>
+                <div class="stat-label">Airdrop Points</div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <h3>Quick Actions</h3>
+            <div class="action-grid">
+                <div class="quick-action" data-action="watchAd">
+                    <img src="https://img.icons8.com/ios/50/play.png" class="action-icon">
+                    <span>Watch Ad</span>
+                </div>
+                <div class="quick-action" data-action="invite">
+                    <img src="https://img.icons8.com/ios/50/invite.png" class="action-icon">
+                    <span>Invite Friends</span>
+                </div>
+                <div class="quick-action" data-action="kyc">
+                    <img src="https://img.icons8.com/ios/50/verified-account.png" class="action-icon">
+                    <span>Verify KYC</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">
-                <div class="logo-icon">Π</div>
-                <span>Pi Swap</span>
+    <!-- Tasks Screen -->
+    <div id="tasksScreen" class="screen">
+        <div class="screen-header">
+            <h2>Daily Tasks</h2>
+            <div class="tasks-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="tasksProgress" style="width: 0%"></div>
+                </div>
+                <span id="tasksCompletedText">0/5 Completed</span>
+            </div>
+        </div>
+
+        <div class="tasks-list">
+            <div class="task-item" data-task="dailyClaim">
+                <div class="task-info">
+                    <div class="task-icon">🎯</div>
+                    <div class="task-details">
+                        <h4>Daily Claim</h4>
+                        <p>Claim 10 π every 24 hours</p>
+                        <div class="task-reward">+10 π</div>
+                    </div>
+                </div>
+                <div class="task-status">
+                    <span class="status-badge completed" id="dailyClaimStatus">Completed</span>
+                </div>
+            </div>
+
+            <div class="task-item" data-task="watchAd">
+                <div class="task-info">
+                    <div class="task-icon">📺</div>
+                    <div class="task-details">
+                        <h4>Watch Advertisement</h4>
+                        <p>Watch ads every 30 minutes</p>
+                        <div class="task-reward">+1 π per ad</div>
+                    </div>
+                </div>
+                <div class="task-status">
+                    <button class="task-action-btn" id="watchAdBtn" data-timer="30">
+                        <span>Watch Ad</span>
+                        <div class="cooldown-timer" style="display:none">30:00</div>
+                    </button>
+                </div>
+            </div>
+
+            <div class="task-item" data-task="joinChannel">
+                <div class="task-info">
+                    <div class="task-icon">📢</div>
+                    <div class="task-details">
+                        <h4>Join Telegram Channel</h4>
+                        <p>Join our official channel</p>
+                        <div class="task-reward">+50 π</div>
+                    </div>
+                </div>
+                <div class="task-status">
+                    <button class="task-action-btn" id="joinChannelBtn">
+                        <span>Join Channel</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="task-item" data-task="kyc">
+                <div class="task-info">
+                    <div class="task-icon">✅</div>
+                    <div class="task-details">
+                        <h4>Complete KYC Verification</h4>
+                        <p>Verify your identity</p>
+                        <div class="task-reward">+100 π</div>
+                    </div>
+                </div>
+                <div class="task-status">
+                    <button class="task-action-btn" id="kycBtn">
+                        <span>Verify</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="task-item" data-task="invite">
+                <div class="task-info">
+                    <div class="task-icon">👥</div>
+                    <div class="task-details">
+                        <h4>Invite Friends</h4>
+                        <p>Invite friends to join Pi Swap</p>
+                        <div class="task-reward">+25 π per friend</div>
+                    </div>
+                </div>
+                <div class="task-status">
+                    <button class="task-action-btn" id="inviteBtn">
+                        <span>Invite</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Airdrop Screen -->
+    <div id="airdropScreen" class="screen">
+        <div class="screen-header">
+            <h2>Airdrop Program</h2>
+            <div class="airdrop-info">
+                <div class="airdrop-total">
+                    <span>Total Points:</span>
+                    <span id="airdropTotalPoints">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="airdrop-card">
+            <div class="airdrop-header">
+                <h3>🎁 Pi Swap Airdrop</h3>
+                <div class="airdrop-badge">Active</div>
+            </div>
+            <div class="airdrop-progress">
+                <div class="progress-stats">
+                    <span>Your Tier:</span>
+                    <span id="airdropTier">Bronze</span>
+                </div>
+                <div class="progress-bar large">
+                    <div class="progress-fill" id="airdropProgress" style="width: 0%"></div>
+                </div>
+                <div class="progress-labels">
+                    <span>Bronze</span>
+                    <span>Silver</span>
+                    <span>Gold</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="points-breakdown">
+            <h4>Points Breakdown</h4>
+            <div class="points-list">
+                <div class="point-item">
+                    <span>Daily Claims</span>
+                    <span id="pointsDaily">0 points</span>
+                </div>
+                <div class="point-item">
+                    <span>Tasks Completed</span>
+                    <span id="pointsTasks">0 points</span>
+                </div>
+                <div class="point-item">
+                    <span>KYC Verified</span>
+                    <span id="pointsKYC">0 points</span>
+                </div>
+                <div class="point-item">
+                    <span>Channel Member</span>
+                    <span id="pointsChannel">0 points</span>
+                </div>
+                <div class="point-item">
+                    <span>Referrals</span>
+                    <span id="pointsReferrals">0 points</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="verify-section">
+            <button class="verify-btn" id="verifyAirdropBtn">
+                <span>Verify Eligibility</span>
+            </button>
+            <p class="verify-note">Verify your wallet to participate in the airdrop</p>
+        </div>
+    </div>
+
+    <!-- Profile Screen -->
+    <div id="profileScreen" class="screen">
+        <div class="profile-header">
+            <div class="user-avatar-large">
+                <img id="profileAvatar" src="" alt="Avatar">
+                <div class="premium-badge" id="profilePremiumBadge" style="display:none">⭐</div>
             </div>
             <div class="user-info">
-                <div class="user-avatar" id="user-avatar">U</div>
-                <span id="user-name">User</span>
+                <h2 id="profileName">User Name</h2>
+                <p id="profileUsername">@username</p>
+                <div class="user-tier">
+                    <span class="tier-badge" id="userTier">Member</span>
+                </div>
             </div>
-        </header>
+        </div>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Home Page -->
-            <section id="home" class="page active">
-                <div class="welcome-section">
-                    <div class="welcome-text">Welcome, <span class="username" id="welcome-username">@username</span></div>
-                    <p>Earn Pi tokens by mining and completing tasks!</p>
+        <div class="profile-stats">
+            <div class="profile-stat">
+                <div class="stat-icon">🪙</div>
+                <div class="stat-info">
+                    <span class="stat-value" id="profilePiBalance">0 π</span>
+                    <span class="stat-label">Pi Swap Balance</span>
                 </div>
-
-                <div class="card">
-                    <div class="balance-display">
-                        <div class="balance-label">Your Pi Swap Balance</div>
-                        <div class="balance-amount" id="balance-display">
-                            <div class="coin-icon">Π</div>
-                            <span id="balance-value">0</span> ΠS
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="mining-section">
-                        <button class="btn btn-primary btn-block" id="start-mining-btn">
-                            <i class="fas fa-play-circle"></i> Start Mining — Earn 5 ΠS
-                        </button>
-                        <div class="mining-timer" id="mining-timer">
-                            Next mining in: <span class="timer-text" id="mining-timer-value">24:00:00</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="ad-section">
-                        <button class="btn btn-warning btn-block" id="watch-ad-btn">
-                            <i class="fas fa-ad"></i> Watch Ad — Earn 1 ΠS
-                        </button>
-                        <div class="ad-timer" id="ad-timer">
-                            Next ad in: <span class="timer-text" id="ad-timer-value">0s</span>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Recent Transactions</div>
-                    </div>
-                    <ul class="transaction-list" id="transaction-list">
-                        <!-- Transactions will be populated by JavaScript -->
-                    </ul>
-                </div>
-            </section>
-
-            <!-- Tasks Page -->
-            <section id="tasks" class="page">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Available Tasks</div>
-                    </div>
-                    <div id="tasks-list">
-                        <!-- Tasks will be populated by JavaScript -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- Invite Friends Page -->
-            <section id="invite" class="page">
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Invite Friends</div>
-                    </div>
-                    <p>Share your referral link with friends and earn 5 ΠS for each successful referral!</p>
-                    
-                    <div class="referral-code" id="referral-code">PISWAP-1234</div>
-                    
-                    <div class="referral-stats">
-                        <div class="stat-item">
-                            <div class="stat-value" id="referrals-count">0</div>
-                            <div class="stat-label">Referrals</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-value" id="referral-earnings">0 ΠS</div>
-                            <div class="stat-label">Earnings</div>
-                        </div>
-                    </div>
-                    
-                    <div class="share-buttons">
-                        <button class="btn btn-primary share-btn" id="copy-referral-btn">
-                            <i class="fas fa-copy"></i> Copy Link
-                        </button>
-                        <button class="btn btn-secondary share-btn" id="share-telegram-btn">
-                            <i class="fab fa-telegram"></i> Share on Telegram
-                        </button>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Wallet Page -->
-            <section id="wallet" class="page">
-                <div class="card">
-                    <div class="balance-display">
-                        <div class="balance-label">Available Balance</div>
-                        <div class="balance-amount" id="wallet-balance">
-                            <div class="coin-icon">Π</div>
-                            <span id="wallet-balance-value">0</span> ΠS
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Withdraw Pi Swap Tokens</div>
-                    </div>
-                    
-                    <div class="withdraw-form">
-                        <div class="form-group">
-                            <label class="form-label" for="withdraw-amount">Amount (ΠS)</label>
-                            <input type="number" class="form-control" id="withdraw-amount" placeholder="Enter amount">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label class="form-label" for="pi-address">Pi Network Address</label>
-                            <input type="text" class="form-control" id="pi-address" placeholder="Enter your Pi address">
-                        </div>
-                        
-                        <button class="btn btn-primary btn-block" id="withdraw-btn">
-                            <i class="fas fa-paper-plane"></i> Withdraw
-                        </button>
-                    </div>
-                    
-                    <div class="disclaimer">
-                        Pi Swap tokens are experimental and for demo — not financial advice.
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="card-header">
-                        <div class="card-title">Transaction History</div>
-                    </div>
-                    <ul class="transaction-list" id="wallet-transactions">
-                        <!-- Wallet transactions will be populated by JavaScript -->
-                    </ul>
-                </div>
-            </section>
-        </main>
-
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <div class="nav-item active" data-page="home">
-                <i class="fas fa-home"></i>
-                <span>Home</span>
             </div>
-            <div class="nav-item" data-page="tasks">
-                <i class="fas fa-tasks"></i>
-                <span>Tasks</span>
+            <div class="profile-stat">
+                <div class="stat-icon">📈</div>
+                <div class="stat-info">
+                    <span class="stat-value" id="profileTotalEarned">0 π</span>
+                    <span class="stat-label">Total Earned</span>
+                </div>
             </div>
-            <div class="nav-item" data-page="invite">
-                <i class="fas fa-user-friends"></i>
-                <span>Invite</span>
+            <div class="profile-stat">
+                <div class="stat-icon">✅</div>
+                <div class="stat-info">
+                    <span class="stat-value" id="profileTasksDone">0</span>
+                    <span class="stat-label">Tasks Completed</span>
+                </div>
             </div>
-            <div class="nav-item" data-page="wallet">
-                <i class="fas fa-wallet"></i>
-                <span>Wallet</span>
+        </div>
+
+        <div class="profile-actions">
+            <h3>Account Settings</h3>
+            <div class="settings-list">
+                <div class="setting-item" id="kycSetting">
+                    <div class="setting-info">
+                        <div class="setting-icon">🆔</div>
+                        <div>
+                            <h4>KYC Verification</h4>
+                            <p>Verify your identity</p>
+                        </div>
+                    </div>
+                    <div class="setting-status">
+                        <span class="status-badge pending" id="kycStatus">Not Verified</span>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-icon">🔗</div>
+                        <div>
+                            <h4>Wallet Connection</h4>
+                            <p>Connect TON wallet</p>
+                        </div>
+                    </div>
+                    <div class="setting-status">
+                        <span class="status-badge disconnected" id="walletStatusProfile">Not Connected</span>
+                    </div>
+                </div>
+
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <div class="setting-icon">📢</div>
+                        <div>
+                            <h4>Telegram Channel</h4>
+                            <p>Join our community</p>
+                        </div>
+                    </div>
+                    <div class="setting-status">
+                        <span class="status-badge pending" id="channelStatus">Not Joined</span>
+                    </div>
+                </div>
             </div>
-        </nav>
+        </div>
     </div>
 
-    <!-- Ad Modal -->
-    <div class="modal-overlay" id="ad-modal">
-        <div class="modal">
+    <!-- Shop Bottom Sheet -->
+    <div id="shopSheet" class="bottom-sheet">
+        <div class="sheet-header">
+            <h3>Buy Pi Swap Tokens</h3>
+            <button class="sheet-close" id="closeShopBtn">×</button>
+        </div>
+        <div class="sheet-content">
+            <div class="wallet-info-sheet">
+                <div class="wallet-balance">
+                    <span>TON Balance:</span>
+                    <span id="sheetTonBalance">0 TON</span>
+                </div>
+                <div class="wallet-address" id="sheetWalletAddress">
+                    Not connected
+                </div>
+            </div>
+
+            <div class="buy-options">
+                <div class="buy-option" data-amount="100" data-price="1">
+                    <div class="option-header">
+                        <span class="option-amount">100 π</span>
+                        <span class="option-price">1 TON</span>
+                    </div>
+                    <div class="option-desc">Starter Pack</div>
+                    <button class="buy-btn" data-amount="100">Buy Now</button>
+                </div>
+
+                <div class="buy-option featured" data-amount="1000" data-price="10">
+                    <div class="option-header">
+                        <span class="option-amount">1000 π</span>
+                        <span class="option-price">10 TON</span>
+                    </div>
+                    <div class="option-desc">Best Value</div>
+                    <button class="buy-btn" data-amount="1000">Buy Now</button>
+                </div>
+
+                <div class="buy-option" data-amount="5000" data-price="45">
+                    <div class="option-header">
+                        <span class="option-amount">5000 π</span>
+                        <span class="option-price">45 TON</span>
+                    </div>
+                    <div class="option-desc">Whale Package</div>
+                    <button class="buy-btn" data-amount="5000">Buy Now</button>
+                </div>
+            </div>
+
+            <div class="payment-info">
+                <div class="info-item">
+                    <span>Recipient Wallet:</span>
+                    <span class="wallet-address">UQCTZAMbXoN5T43K9gJXH8GYWBmIstXrUrdoV9kv3btN1Ad3</span>
+                </div>
+                <div class="info-item">
+                    <span>Network:</span>
+                    <span>TON Mainnet</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- KYC Modal -->
+    <div id="kycModal" class="modal">
+        <div class="modal-content">
             <div class="modal-header">
-                <div class="modal-title">Watch Ad to Earn Rewards</div>
-                <button class="modal-close" id="close-ad-modal">&times;</button>
+                <h3>KYC Verification</h3>
+                <button class="modal-close" id="closeKycBtn">×</button>
             </div>
             <div class="modal-body">
-                <div class="ad-container">
-                    <div class="ad-placeholder">
-                        Adsgram Advertisement
+                <div class="kyc-steps">
+                    <div class="kyc-step active">
+                        <div class="step-number">1</div>
+                        <div class="step-info">
+                            <h4>Basic Information</h4>
+                            <p>Provide your personal details</p>
+                        </div>
                     </div>
-                    <div class="countdown" id="countdown">30</div>
-                    <div class="progress-bar">
-                        <div class="progress" id="ad-progress"></div>
+                    <div class="kyc-step">
+                        <div class="step-number">2</div>
+                        <div class="step-info">
+                            <h4>Document Upload</h4>
+                            <p>Upload government ID</p>
+                        </div>
                     </div>
-                    <p>Please watch the ad to completion to earn your reward.</p>
+                    <div class="kyc-step">
+                        <div class="step-number">3</div>
+                        <div class="step-info">
+                            <h4>Selfie Verification</h4>
+                            <p>Take a selfie with your ID</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="kyc-form">
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="kycName" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="kycEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label>Country</label>
+                        <select id="kycCountry">
+                            <option value="">Select Country</option>
+                            <option value="US">United States</option>
+                            <option value="UK">United Kingdom</option>
+                            <option value="CA">Canada</option>
+                            <!-- Add more countries -->
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelKycBtn">Cancel</button>
+                <button class="btn-primary" id="submitKycBtn">Start Verification</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Coming Soon Modal -->
+    <div id="comingSoonModal" class="modal">
+        <div class="modal-content small">
+            <div class="modal-header">
+                <h3>Coming Soon</h3>
+            </div>
+            <div class="modal-body">
+                <div class="coming-soon-content">
+                    <div class="soon-icon">🚀</div>
+                    <p>This feature is under development and will be available soon!</p>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" id="skip-ad-btn" disabled>Skip Ad (15s)</button>
+                <button class="btn-primary" id="closeSoonBtn">OK</button>
             </div>
         </div>
     </div>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <i class="fas fa-check-circle"></i>
-        <span>Transaction completed successfully!</span>
+    <!-- Transaction Modal -->
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Processing Transaction</h3>
+            </div>
+            <div class="modal-body">
+                <div class="transaction-details">
+                    <div class="transaction-item">
+                        <span>You Pay:</span>
+                        <span id="transactionTonAmount">0 TON</span>
+                    </div>
+                    <div class="transaction-item">
+                        <span>You Receive:</span>
+                        <span id="transactionPiAmount">0 π</span>
+                    </div>
+                    <div class="transaction-item">
+                        <span>Network Fee:</span>
+                        <span>~0.05 TON</span>
+                    </div>
+                </div>
+                <div class="transaction-status" id="transactionStatus">
+                    Initializing transaction...
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" id="cancelTransactionBtn">Cancel</button>
+                <button class="btn-primary" id="confirmTransactionBtn">Confirm</button>
+            </div>
+        </div>
     </div>
 
-    <script>
-        // App State
-        const state = {
-            user: {
-                id: '',
-                username: 'user',
-                firstName: 'User',
-                avatar: 'U'
-            },
-            balance: 0,
-            transactions: [],
-            tasks: [],
-            referrals: {
-                code: '',
-                count: 0,
-                earnings: 0
-            },
-            mining: {
-                active: false,
-                nextAvailable: null,
-                lastMined: null
-            },
-            adCooldown: 0,
-            adsWatchedToday: 0,
-            lastAdWatch: null
-        };
+    <!-- Overlay -->
+    <div class="overlay" id="overlay"></div>
 
-        // DOM Elements
-        const elements = {
-            // Splash screen
-            splashScreen: document.getElementById('splash-screen'),
-            loadingProgress: document.getElementById('loading-progress'),
-            
-            // Pages
-            pages: document.querySelectorAll('.page'),
-            navItems: document.querySelectorAll('.nav-item'),
-            
-            // Home page
-            welcomeUsername: document.getElementById('welcome-username'),
-            balanceDisplay: document.getElementById('balance-display'),
-            balanceValue: document.getElementById('balance-value'),
-            startMiningBtn: document.getElementById('start-mining-btn'),
-            miningTimer: document.getElementById('mining-timer'),
-            miningTimerValue: document.getElementById('mining-timer-value'),
-            watchAdBtn: document.getElementById('watch-ad-btn'),
-            adTimer: document.getElementById('ad-timer'),
-            adTimerValue: document.getElementById('ad-timer-value'),
-            transactionList: document.getElementById('transaction-list'),
-            
-            // Tasks page
-            tasksList: document.getElementById('tasks-list'),
-            
-            // Invite page
-            referralCode: document.getElementById('referral-code'),
-            referralsCount: document.getElementById('referrals-count'),
-            referralEarnings: document.getElementById('referral-earnings'),
-            copyReferralBtn: document.getElementById('copy-referral-btn'),
-            shareTelegramBtn: document.getElementById('share-telegram-btn'),
-            
-            // Wallet page
-            walletBalance: document.getElementById('wallet-balance'),
-            walletBalanceValue: document.getElementById('wallet-balance-value'),
-            withdrawAmount: document.getElementById('withdraw-amount'),
-            piAddress: document.getElementById('pi-address'),
-            withdrawBtn: document.getElementById('withdraw-btn'),
-            walletTransactions: document.getElementById('wallet-transactions'),
-            
-            // Modals & Toast
-            adModal: document.getElementById('ad-modal'),
-            closeAdModal: document.getElementById('close-ad-modal'),
-            skipAdBtn: document.getElementById('skip-ad-btn'),
-            countdown: document.getElementById('countdown'),
-            adProgress: document.getElementById('ad-progress'),
-            toast: document.getElementById('toast'),
-            
-            // User info
-            userName: document.getElementById('user-name'),
-            userAvatar: document.getElementById('user-avatar')
-        };
-
-        // Initialize App
-        function initApp() {
-            // Show splash screen
-            showSplashScreen();
-            
-            // Load state from localStorage
-            loadState();
-            
-            // Initialize Telegram WebApp integration
-            initTelegramWebApp();
-            
-            // Initialize navigation
-            initNavigation();
-            
-            // Initialize event listeners
-            initEventListeners();
-            
-            // Initialize timers
-            initMiningTimer();
-            initAdCooldown();
-            
-            // Render initial UI
-            renderUI();
-        }
-
-        // Show splash screen with loading animation
-        function showSplashScreen() {
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 5;
-                elements.loadingProgress.style.width = `${progress}%`;
-                
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    setTimeout(() => {
-                        elements.splashScreen.style.opacity = '0';
-                        elements.splashScreen.style.visibility = 'hidden';
-                    }, 500);
-                }
-            }, 100);
-        }
-
-        // Load state from localStorage
-        function loadState() {
-            // Load user data
-            const savedUser = localStorage.getItem('pi_user');
-            if (savedUser) {
-                state.user = JSON.parse(savedUser);
-            }
-            
-            // Load balance
-            const savedBalance = localStorage.getItem('pi_balance');
-            if (savedBalance) {
-                state.balance = parseInt(savedBalance);
-            }
-            
-            // Load transactions
-            const savedTransactions = localStorage.getItem('pi_transactions');
-            if (savedTransactions) {
-                state.transactions = JSON.parse(savedTransactions);
-            }
-            
-            // Load mining data
-            const savedMining = localStorage.getItem('pi_mining');
-            if (savedMining) {
-                state.mining = JSON.parse(savedMining);
-            }
-            
-            // Load ad cooldown
-            const savedAdCooldown = localStorage.getItem('pi_ad_cooldown');
-            if (savedAdCooldown) {
-                state.adCooldown = parseInt(savedAdCooldown);
-            }
-            
-            // Load tasks
-            const savedTasks = localStorage.getItem('pi_tasks');
-            if (savedTasks) {
-                state.tasks = JSON.parse(savedTasks);
-            } else {
-                // Initialize with demo tasks
-                state.tasks = [
-                    { 
-                        id: 1, 
-                        title: 'Watch Adsgram Ad', 
-                        description: 'Watch an ad every 30 seconds to earn 1 Pi token', 
-                        reward: 1, 
-                        completed: false,
-                        type: 'repeatable',
-                        cooldown: 30
-                    },
-                    { 
-                        id: 2, 
-                        title: 'Join Pi Network Channel', 
-                        description: 'Join the official Pi Network channel', 
-                        reward: 2, 
-                        completed: false,
-                        type: 'channel',
-                        channel: '@PiNetwork'
-                    },
-                    { 
-                        id: 3, 
-                        title: 'Join Pi Swap Community', 
-                        description: 'Join our community channel for updates', 
-                        reward: 2, 
-                        completed: false,
-                        type: 'channel',
-                        channel: '@PiSwapCommunity'
-                    }
-                ];
-            }
-            
-            // Load referrals
-            const savedReferrals = localStorage.getItem('pi_referrals');
-            if (savedReferrals) {
-                state.referrals = JSON.parse(savedReferrals);
-            } else {
-                // Generate referral code
-                state.referrals.code = generateReferralCode();
-                state.referrals.count = 0;
-                state.referrals.earnings = 0;
-            }
-            
-            // Calculate ad cooldown
-            if (state.lastAdWatch) {
-                const now = Date.now();
-                const lastWatch = new Date(state.lastAdWatch).getTime();
-                const diff = Math.floor((now - lastWatch) / 1000);
-                
-                if (diff < 30) {
-                    state.adCooldown = 30 - diff;
-                }
-            }
-        }
-
-        // Save state to localStorage
-        function saveState() {
-            localStorage.setItem('pi_user', JSON.stringify(state.user));
-            localStorage.setItem('pi_balance', state.balance.toString());
-            localStorage.setItem('pi_transactions', JSON.stringify(state.transactions));
-            localStorage.setItem('pi_mining', JSON.stringify(state.mining));
-            localStorage.setItem('pi_ad_cooldown', state.adCooldown.toString());
-            localStorage.setItem('pi_tasks', JSON.stringify(state.tasks));
-            localStorage.setItem('pi_referrals', JSON.stringify(state.referrals));
-        }
-
-        // Initialize Telegram WebApp integration
-        function initTelegramWebApp() {
-            // Check if running in Telegram WebApp
-            if (window.Telegram && window.Telegram.WebApp) {
-                const tg = window.Telegram.WebApp;
-                const user = tg.initDataUnsafe.user;
-                
-                if (user) {
-                    state.user.id = user.id;
-                    state.user.username = user.username || `user${user.id}`;
-                    state.user.firstName = user.first_name || 'Telegram User';
-                    state.user.avatar = state.user.firstName.charAt(0).toUpperCase();
-                    
-                    // Expand the WebApp to full height
-                    tg.expand();
-                    
-                    // Enable closing confirmation
-                    tg.enableClosingConfirmation();
-                    
-                    // Save user data
-                    saveState();
-                }
-            } else {
-                // Demo user (for testing outside Telegram)
-                state.user.id = 'demo_user';
-                state.user.username = 'demo_user';
-                state.user.firstName = 'Demo User';
-                state.user.avatar = 'U';
-            }
-            
-            // Update UI
-            elements.userName.textContent = state.user.firstName;
-            elements.userAvatar.textContent = state.user.avatar;
-            elements.welcomeUsername.textContent = `@${state.user.username}`;
-        }
-
-        // Initialize navigation
-        function initNavigation() {
-            elements.navItems.forEach(item => {
-                item.addEventListener('click', () => {
-                    const pageId = item.getAttribute('data-page');
-                    switchPage(pageId);
-                    
-                    // Update active nav item
-                    elements.navItems.forEach(nav => nav.classList.remove('active'));
-                    item.classList.add('active');
-                });
-            });
-        }
-
-        // Switch between pages
-        function switchPage(pageId) {
-            elements.pages.forEach(page => {
-                page.classList.remove('active');
-            });
-            
-            const targetPage = document.getElementById(pageId);
-            if (targetPage) {
-                targetPage.classList.add('active');
-            }
-        }
-
-        // Initialize event listeners
-        function initEventListeners() {
-            // Mining button
-            elements.startMiningBtn.addEventListener('click', startMining);
-            
-            // Watch ad button
-            elements.watchAdBtn.addEventListener('click', openAdModal);
-            
-            // Ad modal controls
-            elements.closeAdModal.addEventListener('click', closeAdModal);
-            elements.skipAdBtn.addEventListener('click', closeAdModal);
-            
-            // Copy referral code
-            elements.copyReferralBtn.addEventListener('click', copyReferralLink);
-            
-            // Share on Telegram
-            elements.shareTelegramBtn.addEventListener('click', shareOnTelegram);
-            
-            // Withdraw button
-            elements.withdrawBtn.addEventListener('click', processWithdrawal);
-        }
-
-        // Initialize mining timer
-        function initMiningTimer() {
-            if (state.mining.nextAvailable) {
-                const now = new Date().getTime();
-                const nextAvailable = new Date(state.mining.nextAvailable).getTime();
-                
-                if (now < nextAvailable) {
-                    // Mining is on cooldown
-                    state.mining.active = false;
-                    updateMiningButtonState();
-                    
-                    // Start countdown
-                    const timeDiff = nextAvailable - now;
-                    startMiningCountdown(Math.floor(timeDiff / 1000));
-                } else {
-                    // Mining is available
-                    state.mining.active = true;
-                    updateMiningButtonState();
-                }
-            } else {
-                // First time mining
-                state.mining.active = true;
-                updateMiningButtonState();
-            }
-        }
-
-        // Initialize ad cooldown timer
-        function initAdCooldown() {
-            updateAdButtonState();
-            
-            if (state.adCooldown > 0) {
-                const cooldownInterval = setInterval(() => {
-                    state.adCooldown--;
-                    updateAdButtonState();
-                    
-                    if (state.adCooldown <= 0) {
-                        clearInterval(cooldownInterval);
-                        state.adCooldown = 0;
-                        updateAdButtonState();
-                    }
-                }, 1000);
-            }
-        }
-
-        // Update mining button state
-        function updateMiningButtonState() {
-            if (state.mining.active) {
-                elements.startMiningBtn.disabled = false;
-                elements.startMiningBtn.innerHTML = '<i class="fas fa-play-circle"></i> Start Mining — Earn 5 ΠS';
-                elements.miningTimer.style.display = 'none';
-            } else {
-                elements.startMiningBtn.disabled = true;
-                elements.startMiningBtn.innerHTML = '<i class="fas fa-clock"></i> Mining in Progress';
-                elements.miningTimer.style.display = 'block';
-            }
-        }
-
-        // Update ad button state
-        function updateAdButtonState() {
-            if (state.adCooldown > 0) {
-                elements.watchAdBtn.disabled = true;
-                elements.adTimerValue.textContent = `${state.adCooldown}s`;
-                elements.adTimer.style.display = 'block';
-            } else {
-                elements.watchAdBtn.disabled = false;
-                elements.adTimer.style.display = 'none';
-            }
-        }
-
-        // Start mining process
-        function startMining() {
-            // Show ad modal for mining
-            openAdModal('mining');
-        }
-
-        // Open ad modal
-        function openAdModal(type = 'ad') {
-            elements.adModal.dataset.type = type;
-            elements.adModal.classList.add('active');
-            startAdCountdown(type);
-        }
-
-        // Close ad modal
-        function closeAdModal() {
-            elements.adModal.classList.remove('active');
-            resetAdCountdown();
-        }
-
-        // Start ad countdown
-        function startAdCountdown(type) {
-            let countdown = 30;
-            elements.countdown.textContent = countdown;
-            elements.adProgress.style.width = '0%';
-            elements.skipAdBtn.disabled = true;
-            
-            const countdownInterval = setInterval(() => {
-                countdown--;
-                elements.countdown.textContent = countdown;
-                elements.adProgress.style.width = `${(30 - countdown) * (100/30)}%`;
-                
-                if (countdown <= 15) {
-                    elements.skipAdBtn.disabled = false;
-                    elements.skipAdBtn.textContent = 'Skip Ad';
-                }
-                
-                if (countdown <= 0) {
-                    clearInterval(countdownInterval);
-                    completeAd(type);
-                }
-            }, 1000);
-            
-            // Store interval ID to clear if needed
-            elements.adModal.countdownInterval = countdownInterval;
-        }
-
-        // Reset ad countdown
-        function resetAdCountdown() {
-            if (elements.adModal.countdownInterval) {
-                clearInterval(elements.adModal.countdownInterval);
-            }
-            
-            elements.skipAdBtn.disabled = true;
-            elements.skipAdBtn.textContent = 'Skip Ad (15s)';
-        }
-
-        // Complete ad watching
-        function completeAd(type) {
-            closeAdModal();
-            
-            if (type === 'mining') {
-                // Complete mining process
-                completeMining();
-            } else {
-                // Complete regular ad task
-                completeAdTask();
-            }
-        }
-
-        // Complete mining process
-        function completeMining() {
-            // Reward user with 5 tokens
-            creditUser(5, 'Mining Reward');
-            
-            // Set mining cooldown (24 hours)
-            const now = new Date();
-            const nextAvailable = new Date(now.getTime() + 24 * 60 * 60 * 1000);
-            
-            state.mining.active = false;
-            state.mining.nextAvailable = nextAvailable.toISOString();
-            state.mining.lastMined = now.toISOString();
-            
-            // Start countdown
-            startMiningCountdown(24 * 60 * 60);
-            
-            // Update UI
-            updateMiningButtonState();
-            
-            showToast('Mining started! You earned 5 ΠS');
-            
-            // Save state
-            saveState();
-            
-            // In a real implementation, you would call:
-            // showAdsgramAd(() => {
-            //   creditUser(5, "Mining Reward");
-            //   startMiningCooldown(24 * 60 * 60);
-            // });
-        }
-
-        // Complete ad task
-        function completeAdTask() {
-            // Reward user with 1 token
-            creditUser(1, 'Adsgram Ad Reward');
-            
-            // Start cooldown timer
-            startAdCooldown(30);
-            
-            showToast('You earned 1 ΠS for watching the ad!');
-            
-            // In a real implementation, you would call:
-            // showAdsgramAd(() => {
-            //   creditUser(1, "Adsgram Ad Reward");
-            //   startAdCooldown(30);
-            // });
-        }
-
-        // Start mining countdown
-        function startMiningCountdown(seconds) {
-            let remaining = seconds;
-            
-            const updateTimer = () => {
-                const hours = Math.floor(remaining / 3600);
-                const minutes = Math.floor((remaining % 3600) / 60);
-                const secs = remaining % 60;
-                
-                elements.miningTimerValue.textContent = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-                
-                if (remaining <= 0) {
-                    // Mining is available again
-                    state.mining.active = true;
-                    updateMiningButtonState();
-                    saveState();
-                } else {
-                    remaining--;
-                    setTimeout(updateTimer, 1000);
-                }
-            };
-            
-            updateTimer();
-        }
-
-        // Start ad cooldown
-        function startAdCooldown(seconds) {
-            state.adCooldown = seconds;
-            state.lastAdWatch = new Date().toISOString();
-            saveState();
-            updateAdButtonState();
-            
-            const cooldownInterval = setInterval(() => {
-                state.adCooldown--;
-                updateAdButtonState();
-                
-                if (state.adCooldown <= 0) {
-                    clearInterval(cooldownInterval);
-                    state.adCooldown = 0;
-                    updateAdButtonState();
-                    saveState();
-                }
-            }, 1000);
-        }
-
-        // Adsgram integration function
-        function showAdsgramAd(onComplete) {
-            // Placeholder for actual Adsgram SDK integration
-            // In a real implementation, this would call the Adsgram SDK
-            Adsgram.showAd({
-                adUnitId: 'YOUR_ADSGRAM_UNIT_ID',
-                onReward: onComplete,
-                onError: (e) => {
-                    console.error('Adsgram error:', e);
-                    showToast('Ad failed to load. Please try again.', 'error');
-                }
-            });
-        }
-
-        // Credit user with tokens
-        function creditUser(amount, description) {
-            state.balance += amount;
-            
-            // Add transaction
-            state.transactions.unshift({
-                id: Date.now(),
-                type: 'credit',
-                amount: amount,
-                description: description,
-                date: new Date().toISOString()
-            });
-            
-            // Save state and update UI
-            saveState();
-            renderUI();
-            
-            // Animate balance update
-            animateBalanceUpdate();
-        }
-
-        // Animate balance update
-        function animateBalanceUpdate() {
-            const balanceEl = elements.balanceDisplay;
-            balanceEl.classList.add('balance-update');
-            
-            setTimeout(() => {
-                balanceEl.classList.remove('balance-update');
-            }, 500);
-        }
-
-        // Render UI based on current state
-        function renderUI() {
-            // Update balance displays
-            elements.balanceValue.textContent = state.balance;
-            elements.walletBalanceValue.textContent = state.balance;
-            
-            // Render transactions
-            renderTransactions();
-            
-            // Render tasks
-            renderTasks();
-            
-            // Render referral info
-            renderReferralInfo();
-        }
-
-        // Render transactions
-        function renderTransactions() {
-            // Home page transactions
-            elements.transactionList.innerHTML = '';
-            state.transactions.slice(0, 5).forEach(transaction => {
-                const transactionEl = createTransactionElement(transaction);
-                elements.transactionList.appendChild(transactionEl);
-            });
-            
-            // Wallet page transactions
-            elements.walletTransactions.innerHTML = '';
-            state.transactions.forEach(transaction => {
-                const transactionEl = createTransactionElement(transaction);
-                elements.walletTransactions.appendChild(transactionEl);
-            });
-        }
-
-        // Create transaction element
-        function createTransactionElement(transaction) {
-            const li = document.createElement('li');
-            li.className = 'transaction-item';
-            
-            let iconClass = 'fas fa-ad';
-            if (transaction.type === 'mining') iconClass = 'fas fa-digging';
-            if (transaction.type === 'task') iconClass = 'fas fa-tasks';
-            if (transaction.type === 'referral') iconClass = 'fas fa-user-friends';
-            if (transaction.type === 'withdrawal') iconClass = 'fas fa-paper-plane';
-            
-            li.innerHTML = `
-                <div class="transaction-icon">
-                    <i class="${iconClass}"></i>
-                </div>
-                <div class="transaction-details">
-                    <div class="transaction-title">${transaction.description}</div>
-                    <div class="transaction-date">${formatDate(transaction.date)}</div>
-                </div>
-                <div class="transaction-amount ${transaction.amount > 0 ? 'positive' : ''}">
-                    ${transaction.amount > 0 ? '+' : ''}${transaction.amount} ΠS
-                </div>
-            `;
-            
-            return li;
-        }
-
-        // Render tasks
-        function renderTasks() {
-            elements.tasksList.innerHTML = '';
-            
-            state.tasks.forEach(task => {
-                const taskEl = document.createElement('div');
-                taskEl.className = 'task-item';
-                
-                let iconClass = 'fas fa-ad';
-                if (task.type === 'channel') iconClass = 'fas fa-users';
-                
-                let buttonText = 'Start';
-                let buttonClass = 'btn-primary';
-                let disabled = false;
-                let statusText = 'Available';
-                let statusClass = 'status-available';
-                
-                if (task.completed) {
-                    buttonText = 'Completed';
-                    buttonClass = 'btn-secondary';
-                    disabled = true;
-                    statusText = 'Completed';
-                    statusClass = 'status-completed';
-                } else if (task.type === 'repeatable' && state.adCooldown > 0) {
-                    buttonText = `Wait ${state.adCooldown}s`;
-                    buttonClass = 'btn-secondary';
-                    disabled = true;
-                    statusText = 'Waiting';
-                    statusClass = 'status-waiting';
-                }
-                
-                taskEl.innerHTML = `
-                    <div class="task-icon">
-                        <i class="${iconClass}"></i>
-                    </div>
-                    <div class="task-details">
-                        <div class="task-title">${task.title}</div>
-                        <div class="task-description">${task.description}</div>
-                    </div>
-                    <div class="task-reward">+${task.reward} ΠS</div>
-                    <div class="task-status ${statusClass}">${statusText}</div>
-                    <button class="btn ${buttonClass}" 
-                            data-task-id="${task.id}" 
-                            ${disabled ? 'disabled' : ''}>
-                        ${buttonText}
-                    </button>
-                `;
-                
-                elements.tasksList.appendChild(taskEl);
-                
-                // Add event listener to claim button
-                if (!task.completed) {
-                    const claimBtn = taskEl.querySelector('button');
-                    claimBtn.addEventListener('click', () => claimTask(task.id));
-                }
-            });
-        }
-
-        // Claim task reward
-        function claimTask(taskId) {
-            const task = state.tasks.find(t => t.id === taskId);
-            if (task && !task.completed) {
-                if (task.type === 'repeatable') {
-                    // For ad task, open ad modal
-                    openAdModal('ad');
-                } else if (task.type === 'channel') {
-                    // For channel task, open channel and mark as completed
-                    window.open(`https://t.me/${task.channel}`, '_blank');
-                    task.completed = true;
-                    
-                    // Reward user
-                    creditUser(task.reward, `Task: ${task.title}`);
-                    
-                    showToast(`You earned ${task.reward} ΠS for joining the channel!`);
-                }
-                
-                // Save state and update UI
-                saveState();
-                renderTasks();
-            }
-        }
-
-        // Render referral info
-        function renderReferralInfo() {
-            // Generate referral link
-            const referralLink = `https://t.me/YourBot?start=REF_${state.user.id}`;
-            elements.referralCode.textContent = referralLink;
-            elements.referralsCount.textContent = state.referrals.count;
-            elements.referralEarnings.textContent = `${state.referrals.earnings} ΠS`;
-        }
-
-        // Copy referral link to clipboard
-        function copyReferralLink() {
-            const referralLink = `https://t.me/YourBot?start=REF_${state.user.id}`;
-            navigator.clipboard.writeText(referralLink)
-                .then(() => {
-                    showToast('Referral link copied to clipboard!');
-                })
-                .catch(err => {
-                    console.error('Failed to copy: ', err);
-                    // Fallback for older browsers
-                    const textArea = document.createElement('textarea');
-                    textArea.value = referralLink;
-                    document.body.appendChild(textArea);
-                    textArea.select();
-                    document.execCommand('copy');
-                    document.body.removeChild(textArea);
-                    showToast('Referral link copied to clipboard!');
-                });
-        }
-
-        // Share on Telegram
-        function shareOnTelegram() {
-            const referralLink = `https://t.me/YourBot?start=REF_${state.user.id}`;
-            const text = `Join Pi Swap using my referral link and earn Pi tokens! ${referralLink}`;
-            const url = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(text)}`;
-            window.open(url, '_blank');
-        }
-
-        // Process withdrawal
-        function processWithdrawal() {
-            const amount = parseInt(elements.withdrawAmount.value);
-            const address = elements.piAddress.value.trim();
-            
-            // Validation
-            if (!amount || amount <= 0) {
-                showToast('Please enter a valid amount', 'error');
-                return;
-            }
-            
-            if (amount > state.balance) {
-                showToast('Insufficient balance', 'error');
-                return;
-            }
-            
-            if (!address) {
-                showToast('Please enter your Pi address', 'error');
-                return;
-            }
-            
-            // Process withdrawal
-            state.balance -= amount;
-            
-            // Add transaction
-            state.transactions.unshift({
-                id: Date.now(),
-                type: 'withdrawal',
-                amount: -amount,
-                description: `Withdrawal to ${address.substring(0, 6)}...`,
-                date: new Date().toISOString()
-            });
-            
-            // Save state and update UI
-            saveState();
-            renderUI();
-            
-            // Reset form
-            elements.withdrawAmount.value = '';
-            elements.piAddress.value = '';
-            
-            showToast(`Withdrawal of ${amount} ΠS submitted successfully!`);
-            
-            // In a real implementation, you would call:
-            // fetch('/api/wallet/withdraw', {
-            //   method: 'POST',
-            //   body: JSON.stringify({ 
-            //     userId: state.user.id, 
-            //     amount: amount, 
-            //     address: address 
-            //   })
-            // })
-        }
-
-        // Show toast notification
-        function showToast(message, type = 'success') {
-            elements.toast.innerHTML = `
-                <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
-                <span>${message}</span>
-            `;
-            elements.toast.className = `toast ${type === 'error' ? 'error' : ''}`;
-            elements.toast.classList.add('active');
-            
-            setTimeout(() => {
-                elements.toast.classList.remove('active');
-            }, 3000);
-        }
-
-        // Generate random referral code
-        function generateReferralCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let code = 'PISWAP-';
-            for (let i = 0; i < 6; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
-            }
-            return code;
-        }
-
-        // Format date for display
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diffMs = now - date;
-            const diffMins = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMs / 3600000);
-            const diffDays = Math.floor(diffMs / 86400000);
-            
-            if (diffMins < 1) return 'Just now';
-            if (diffMins < 60) return `${diffMins} min ago`;
-            if (diffHours < 24) return `${diffHours} hr ago`;
-            if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-            
-            return date.toLocaleDateString();
-        }
-
-        // Initialize the app when DOM is loaded
-        document.addEventListener('DOMContentLoaded', initApp);
-    </script>
+<script src="<% options.JSFile %>"></script>
 </body>
 </html>
