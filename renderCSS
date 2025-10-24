@@ -1,0 +1,4 @@
+WebApp.render({
+  template: "script.css",
+  mime_type: "text/css"
+});
