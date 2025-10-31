@@ -7,6 +7,7 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/tonweb/dist/tonweb.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
     <link rel="tonconnect-manifest" href="https://jamladz.github.io/Loding/tonconnect-manifest.json">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
@@ -1067,6 +1068,61 @@
             background-color: rgba(255, 0, 0, 0.8);
         }
 
+        /* Referral Section Styles */
+        .referral-card {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .referral-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .referral-stat {
+            background: var(--background);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .referral-link-container {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .referral-link {
+            flex: 1;
+            background: var(--background);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 0.85rem;
+            word-break: break-all;
+        }
+
+        .copy-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* TON Connect Button */
+        #ton-connect-button {
+            margin-top: 10px;
+        }
+
         /* Responsive */
         @media (max-width: 480px) {
             .screen {
@@ -1397,6 +1453,26 @@
             </div>
         </div>
 
+        <!-- Referral Section -->
+        <div class="referral-card">
+            <h3>🎁 Referral Program</h3>
+            <div class="referral-stats">
+                <div class="referral-stat">
+                    <div class="stat-value" id="referralCount">0</div>
+                    <div class="stat-label">Total Referrals</div>
+                </div>
+                <div class="referral-stat">
+                    <div class="stat-value" id="referralEarnings">0 π</div>
+                    <div class="stat-label">Referral Earnings</div>
+                </div>
+            </div>
+            <div class="referral-link-container">
+                <input type="text" class="referral-link" id="referralLink" readonly value="Loading...">
+                <button class="copy-btn" id="copyReferralBtn">📋 Copy</button>
+            </div>
+            <p class="verify-note">Share your link and earn 25 π for each friend who joins!</p>
+        </div>
+
         <div class="profile-actions">
             <h3>Account Settings</h3>
             <div class="settings-list">
@@ -1629,6 +1705,17 @@
         tg.setBackgroundColor('#1e293b');
         tg.setBottomBarColor('#1e293b');
 
+        // Initialize TON Connect
+        let tonConnectUI;
+        try {
+            tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
+                manifestUrl: 'https://jamladz.github.io/Loding/tonconnect-manifest.json',
+                buttonRootId: 'ton-connect-button'
+            });
+        } catch (error) {
+            console.error('TON Connect initialization failed:', error);
+        }
+
         // App State
         let userData = {
             piBalance: 0,
@@ -1643,8 +1730,88 @@
             tonBalance: 0,
             walletAddress: null,
             airdropTier: 'Bronze',
-            referralCount: 0
+            referralCount: 0,
+            referralEarnings: 0,
+            referrer: null
         };
+
+        // Referral System
+        class ReferralSystem {
+            constructor() {
+                this.init();
+            }
+
+            init() {
+                this.loadReferralData();
+                this.checkReferral();
+            }
+
+            loadReferralData() {
+                const saved = localStorage.getItem('pi_swap_referral_data');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    userData.referralCount = data.referralCount || 0;
+                    userData.referralEarnings = data.referralEarnings || 0;
+                    userData.referrer = data.referrer || null;
+                }
+            }
+
+            saveReferralData() {
+                const data = {
+                    referralCount: userData.referralCount,
+                    referralEarnings: userData.referralEarnings,
+                    referrer: userData.referrer
+                };
+                localStorage.setItem('pi_swap_referral_data', JSON.stringify(data));
+            }
+
+            checkReferral() {
+                // Check if user came from a referral link
+                const startParam = tg.initDataUnsafe.start_param;
+                if (startParam && startParam !== userData.referrer) {
+                    userData.referrer = startParam;
+                    this.saveReferralData();
+                    
+                    // Reward the referrer (in a real app, this would be done server-side)
+                    this.addReferralBonus(startParam);
+                }
+            }
+
+            addReferralBonus(referrerUsername) {
+                // In a real app, this would call a backend API
+                // For demo, we'll simulate rewarding the referrer
+                showNotification(`Welcome! You were referred by ${referrerUsername}`, 'success');
+                
+                // The actual referral bonus would be handled by the backend
+                // when the referred user completes certain actions
+            }
+
+            generateReferralLink() {
+                const username = tg.initDataUnsafe.user?.username || 'user';
+                return `https://t.me/Piswapnetwork_bot?start=${username}`;
+            }
+
+            addReferral() {
+                userData.referralCount += 1;
+                userData.referralEarnings += 25;
+                userData.piBalance += 25;
+                userData.totalEarned += 25;
+                userData.airdropPoints += 50;
+                
+                this.saveReferralData();
+                saveUserData();
+                updateUI();
+                
+                showNotification('+25 π for successful referral!', 'success');
+            }
+
+            getReferralStats() {
+                return {
+                    count: userData.referralCount,
+                    earnings: userData.referralEarnings
+                };
+            }
+        }
 
         // TON Wallet Configuration
         const RECIPIENT_WALLET = 'UQCTZAMbXoN5T43K9gJXH8GYWBmIstXrUrdoV9kv3btN1Ad3';
@@ -1661,6 +1828,28 @@
             init() {
                 this.detectWallet();
                 this.loadWalletState();
+                this.setupTONConnect();
+            }
+
+            setupTONConnect() {
+                if (tonConnectUI) {
+                    tonConnectUI.onStatusChange(wallet => {
+                        if (wallet) {
+                            this.isConnected = true;
+                            this.address = wallet.account.address;
+                            this.balance = 0; // Would need to fetch actual balance
+                            this.saveWalletState();
+                            this.updateUI();
+                            showNotification('TON wallet connected successfully!', 'success');
+                        } else {
+                            this.isConnected = false;
+                            this.address = null;
+                            this.balance = 0;
+                            this.saveWalletState();
+                            this.updateUI();
+                        }
+                    });
+                }
             }
 
             detectWallet() {
@@ -1694,6 +1883,11 @@
             }
 
             async connect() {
+                if (tonConnectUI) {
+                    // TON Connect will handle the connection
+                    return;
+                }
+
                 return new Promise((resolve, reject) => {
                     if (this.provider === 'telegram' && tg.platform !== 'unknown') {
                         tg.openInvoice('https://t.me/piswapbot/invoice/connect', (status) => {
@@ -1723,6 +1917,9 @@
             }
 
             disconnect() {
+                if (tonConnectUI) {
+                    tonConnectUI.disconnect();
+                }
                 this.isConnected = false;
                 this.address = null;
                 this.balance = 0;
@@ -1731,6 +1928,28 @@
             }
 
             async sendTransaction(amount) {
+                if (tonConnectUI && this.isConnected) {
+                    try {
+                        const transaction = {
+                            validUntil: Math.floor(Date.now() / 1000) + 600,
+                            messages: [
+                                {
+                                    address: RECIPIENT_WALLET,
+                                    amount: (amount * 1000000000).toString() // Convert to nanotons
+                                }
+                            ]
+                        };
+
+                        const result = await tonConnectUI.sendTransaction(transaction);
+                        return {
+                            hash: result.boc,
+                            success: true
+                        };
+                    } catch (error) {
+                        throw new Error('Transaction failed: ' + error.message);
+                    }
+                }
+
                 return new Promise((resolve, reject) => {
                     if (!this.isConnected) {
                         reject(new Error('Wallet not connected'));
@@ -1774,7 +1993,7 @@
                     statusProfile.textContent = 'Connected';
                     statusProfile.className = 'status-badge completed';
                     sheetBalance.textContent = `${this.balance} TON`;
-                    sheetAddress.textContent = this.address;
+                    sheetAddress.textContent = this.address ? `${this.address.substring(0, 8)}...${this.address.substring(this.address.length - 8)}` : 'Connected';
                 } else {
                     statusElement.innerHTML = `
                         <div class="status-indicator disconnected"></div>
@@ -1788,7 +2007,8 @@
             }
         }
 
-        // Initialize TON Wallet
+        // Initialize systems
+        const referralSystem = new ReferralSystem();
         const tonWallet = new TONWalletManager();
 
         // Load user data from localStorage
@@ -1818,6 +2038,11 @@
             document.getElementById('profilePiBalance').textContent = userData.piBalance + ' π';
             document.getElementById('profileTotalEarned').textContent = userData.totalEarned + ' π';
             document.getElementById('profileTasksDone').textContent = userData.tasksCompleted;
+
+            // Update referral stats
+            document.getElementById('referralCount').textContent = userData.referralCount;
+            document.getElementById('referralEarnings').textContent = userData.referralEarnings + ' π';
+            document.getElementById('referralLink').value = referralSystem.generateReferralLink();
 
             // Update airdrop
             document.getElementById('airdropTier').textContent = userData.airdropTier;
@@ -2051,7 +2276,7 @@
                 return;
             }
 
-            if (tonWallet.balance < price) {
+            if (tonWallet.balance < price && !tonConnectUI) {
                 showNotification('Insufficient TON balance', 'error');
                 return;
             }
@@ -2069,9 +2294,6 @@
 
             try {
                 status.textContent = 'Processing transaction...';
-                
-                // Simulate transaction processing
-                await new Promise(resolve => setTimeout(resolve, 2000));
                 
                 const transaction = await tonWallet.sendTransaction(price);
                 
@@ -2191,7 +2413,6 @@
                     await tonWallet.connect();
                     userData.walletConnected = true;
                     saveUserData();
-                    showNotification('TON wallet connected successfully!', 'success');
                 } catch (error) {
                     showNotification('Failed to connect wallet: ' + error.message, 'error');
                 }
@@ -2218,7 +2439,12 @@
             document.getElementById('watchAdBtn').addEventListener('click', watchAdvertisement);
             document.getElementById('joinChannelBtn').addEventListener('click', joinTelegramChannel);
             document.getElementById('kycBtn').addEventListener('click', startKYCVerification);
-            document.getElementById('inviteBtn').addEventListener('click', showComingSoon);
+            document.getElementById('inviteBtn').addEventListener('click', () => {
+                // Copy referral link when invite button is clicked
+                document.getElementById('referralLink').select();
+                document.execCommand('copy');
+                showNotification('Referral link copied to clipboard!', 'success');
+            });
 
             // Quick actions
             document.querySelectorAll('.quick-action').forEach(action => {
@@ -2229,7 +2455,10 @@
                             watchAdvertisement();
                             break;
                         case 'invite':
-                            showComingSoon();
+                            // Copy referral link
+                            document.getElementById('referralLink').select();
+                            document.execCommand('copy');
+                            showNotification('Referral link copied to clipboard!', 'success');
                             break;
                         case 'kyc':
                             startKYCVerification();
@@ -2254,6 +2483,13 @@
 
             // Airdrop verify
             document.getElementById('verifyAirdropBtn').addEventListener('click', verifyAirdrop);
+
+            // Referral copy button
+            document.getElementById('copyReferralBtn').addEventListener('click', () => {
+                document.getElementById('referralLink').select();
+                document.execCommand('copy');
+                showNotification('Referral link copied to clipboard!', 'success');
+            });
 
             // Overlay click
             document.getElementById('overlay').addEventListener('click', function() {
