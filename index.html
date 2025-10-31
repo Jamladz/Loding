@@ -1123,6 +1123,23 @@
             margin-top: 10px;
         }
 
+        /* Success Message */
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(34, 197, 94, 0.9);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            z-index: 10000;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            display: none;
+        }
+
         /* Responsive */
         @media (max-width: 480px) {
             .screen {
@@ -1284,14 +1301,14 @@
                     <div class="task-icon">📺</div>
                     <div class="task-details">
                         <h4>Watch Adsgram Ad</h4>
-                        <p>Watch ads every 30 seconds</p>
+                        <p>Watch ads every 20 seconds</p>
                         <div class="task-reward">+1 π per ad</div>
                     </div>
                 </div>
                 <div class="task-status">
-                    <button class="task-action-btn" id="watchAdBtn" data-timer="30">
+                    <button class="task-action-btn" id="watchAdBtn" data-timer="20">
                         <span>Watch Ad</span>
-                        <div class="cooldown-timer" style="display:none">30s</div>
+                        <div class="cooldown-timer" style="display:none">20s</div>
                     </button>
                 </div>
             </div>
@@ -1301,7 +1318,7 @@
                     <div class="task-icon">📢</div>
                     <div class="task-details">
                         <h4>Join Telegram Channel</h4>
-                        <p>Join our official channel</p>
+                        <p>Join our official channel every 24 hours</p>
                         <div class="task-reward">+50 π</div>
                     </div>
                 </div>
@@ -1693,6 +1710,11 @@
         <iframe src="https://geo.dailymotion.com/player.html?video=x9h1xe6" allowfullscreen></iframe>
     </div>
 
+    <!-- Success Message -->
+    <div class="success-message" id="successMessage">
+        <div>✅ Success! Ad completed</div>
+    </div>
+
     <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
 
@@ -1724,6 +1746,7 @@
             airdropPoints: 0,
             lastClaim: null,
             lastAdWatch: null,
+            lastChannelJoin: null,
             joinedChannel: false,
             kycVerified: false,
             walletConnected: false,
@@ -2109,10 +2132,10 @@
                 dailyClaimStatus.className = 'status-badge pending';
             }
 
-            // Ad watch status - Changed to 30 seconds
-            if (userData.lastAdWatch && (now - userData.lastAdWatch) < 30 * 1000) {
+            // Ad watch status - Changed to 20 seconds
+            if (userData.lastAdWatch && (now - userData.lastAdWatch) < 20 * 1000) {
                 watchAdBtn.disabled = true;
-                const remaining = Math.ceil((30 * 1000 - (now - userData.lastAdWatch)) / 1000);
+                const remaining = Math.ceil((20 * 1000 - (now - userData.lastAdWatch)) / 1000);
                 watchAdBtn.querySelector('.cooldown-timer').textContent = `${remaining}s`;
                 watchAdBtn.querySelector('.cooldown-timer').style.display = 'block';
                 watchAdBtn.querySelector('span').style.display = 'none';
@@ -2122,10 +2145,14 @@
                 watchAdBtn.querySelector('span').style.display = 'block';
             }
 
-            // Channel join status
-            if (userData.joinedChannel) {
+            // Channel join status - Changed to 24 hours cooldown
+            if (userData.lastChannelJoin && (now - userData.lastChannelJoin) < 24 * 60 * 60 * 1000) {
                 joinChannelBtn.disabled = true;
-                joinChannelBtn.textContent = 'Joined';
+                const remaining = Math.ceil((24 * 60 * 60 * 1000 - (now - userData.lastChannelJoin)) / (60 * 60 * 1000));
+                joinChannelBtn.innerHTML = `<span>${remaining}h</span>`;
+            } else {
+                joinChannelBtn.disabled = false;
+                joinChannelBtn.innerHTML = '<span>Join Channel</span>';
             }
 
             // KYC status
@@ -2182,7 +2209,7 @@
 
                 saveUserData();
                 updateUI();
-                showNotification('Successfully claimed 10 π!', 'success');
+                showSuccessMessage('Successfully claimed 10 π!');
             } catch (error) {
                 showNotification('Ad failed, please try again', 'error');
             } finally {
@@ -2194,9 +2221,9 @@
         async function watchAdvertisement() {
             const now = Date.now();
             
-            // Changed to 30 seconds cooldown
-            if (userData.lastAdWatch && (now - userData.lastAdWatch) < 30 * 1000) {
-                showNotification('Please wait 30 seconds before watching another ad', 'error');
+            // Changed to 20 seconds cooldown
+            if (userData.lastAdWatch && (now - userData.lastAdWatch) < 20 * 1000) {
+                showNotification('Please wait 20 seconds before watching another ad', 'error');
                 return;
             }
 
@@ -2217,7 +2244,7 @@
 
                 saveUserData();
                 updateUI();
-                showNotification('+1 π earned from advertisement!', 'success');
+                showSuccessMessage('+1 π earned from advertisement!');
             } catch (error) {
                 showNotification('Ad failed, please try again', 'error');
             } finally {
@@ -2227,8 +2254,11 @@
         }
 
         function joinTelegramChannel() {
-            if (userData.joinedChannel) {
-                showNotification('You have already joined the channel', 'info');
+            const now = Date.now();
+            
+            // Check if 24 hours have passed since last join
+            if (userData.lastChannelJoin && (now - userData.lastChannelJoin) < 24 * 60 * 60 * 1000) {
+                showNotification('Please wait 24 hours before joining again', 'error');
                 return;
             }
 
@@ -2241,10 +2271,11 @@
                 userData.tasksCompleted += 1;
                 userData.airdropPoints += 100;
                 userData.joinedChannel = true;
+                userData.lastChannelJoin = now;
 
                 saveUserData();
                 updateUI();
-                showNotification('+50 π for joining our channel!', 'success');
+                showSuccessMessage('+50 π for joining our channel!');
             }, 2000);
         }
 
@@ -2267,7 +2298,7 @@
             saveUserData();
             updateUI();
             closeKYCModal();
-            showNotification('KYC verified successfully! +100 π', 'success');
+            showSuccessMessage('KYC verified successfully! +100 π');
         }
 
         async function buyPiSwap(amount, price) {
@@ -2310,7 +2341,7 @@
                     setTimeout(() => {
                         closeModal('transactionModal');
                         closeShopSheet();
-                        showNotification(`Successfully purchased ${amount} π!`, 'success');
+                        showSuccessMessage(`Successfully purchased ${amount} π!`);
                     }, 2000);
                 }
             } catch (error) {
@@ -2350,6 +2381,16 @@
                 setTimeout(() => {
                     document.body.removeChild(notification);
                 }, 300);
+            }, 3000);
+        }
+
+        function showSuccessMessage(message) {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.innerHTML = `<div>✅ ${message}</div>`;
+            successMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                successMessage.style.display = 'none';
             }, 3000);
         }
 
