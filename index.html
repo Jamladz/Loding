@@ -3,31 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
-    <title>Pi Swap - Web3 Ecosystem</title>
+    <title>Pi Swap - TON Web3 Ecosystem</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://unpkg.com/tonweb/dist/tonweb.js"></script>
     <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
     <script src="https://unpkg.com/@tonconnect/ui@latest/dist/tonconnect-ui.min.js"></script>
-    <link rel="tonconnect-manifest" href="https://jamladz.github.io/Loding/tonconnect-manifest.json">
+    <link rel="tonconnect-manifest" href="./tonconnect-manifest.json">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
         :root {
-            --primary-color: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary-color: #f59e0b;
-            --success-color: #22c55e;
-            --danger-color: #ef4444;
-            --warning-color: #f59e0b;
-            --background: #0f172a;
-            --surface: #1e293b;
-            --surface-light: #334155;
-            --text-primary: #f8fafc;
-            --text-secondary: #cbd5e1;
-            --text-muted: #64748b;
-            --border-color: #334155;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --primary-color: #0098EA;
+            --primary-dark: #0077CC;
+            --secondary-color: #FF9F0A;
+            --success-color: #30D158;
+            --danger-color: #FF453A;
+            --warning-color: #FF9F0A;
+            --background: #000000;
+            --surface: #1C1C1E;
+            --surface-light: #2C2C2E;
+            --text-primary: #FFFFFF;
+            --text-secondary: #8E8E93;
+            --text-muted: #636366;
+            --border-color: #38383A;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.25);
+            --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            --gradient-secondary: linear-gradient(135deg, var(--secondary-color), #FF6B00);
+            --gradient-success: linear-gradient(135deg, var(--success-color), #20B24D);
         }
 
         * {
@@ -42,6 +45,7 @@
             color: var(--text-primary);
             overflow-x: hidden;
             padding-bottom: 80px;
+            -webkit-font-smoothing: antialiased;
         }
 
         /* Navigation */
@@ -73,7 +77,7 @@
 
         .nav-item.active {
             opacity: 1;
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(0, 152, 234, 0.15);
         }
 
         .nav-icon {
@@ -134,7 +138,7 @@
         }
 
         .balance-card {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            background: var(--gradient-primary);
             padding: 24px;
             border-radius: 20px;
             box-shadow: var(--shadow-lg);
@@ -206,7 +210,7 @@
         }
 
         .action-btn.shop-btn {
-            background: linear-gradient(135deg, var(--secondary-color), #d97706);
+            background: var(--gradient-secondary);
             color: white;
         }
 
@@ -319,7 +323,7 @@
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, var(--primary-color), var(--primary-dark));
+            background: var(--gradient-primary);
             border-radius: 4px;
             transition: width 0.3s ease;
         }
@@ -355,7 +359,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(0, 152, 234, 0.1);
             border-radius: 10px;
         }
 
@@ -388,17 +392,17 @@
         }
 
         .status-badge.completed {
-            background: rgba(34, 197, 94, 0.1);
+            background: rgba(48, 209, 88, 0.1);
             color: var(--success-color);
         }
 
         .status-badge.pending {
-            background: rgba(245, 158, 11, 0.1);
+            background: rgba(255, 159, 10, 0.1);
             color: var(--warning-color);
         }
 
         .status-badge.disconnected {
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(255, 69, 58, 0.1);
             color: var(--danger-color);
         }
 
@@ -441,7 +445,7 @@
         }
 
         .airdrop-card {
-            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            background: var(--gradient-primary);
             padding: 20px;
             border-radius: 16px;
             margin-bottom: 20px;
@@ -512,7 +516,7 @@
         }
 
         .verify-btn {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            background: var(--gradient-primary);
             color: white;
             border: none;
             padding: 16px 32px;
@@ -570,7 +574,7 @@
         }
 
         .tier-badge {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            background: var(--gradient-primary);
             color: white;
             padding: 4px 12px;
             border-radius: 12px;
@@ -604,7 +608,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(0, 152, 234, 0.1);
             border-radius: 10px;
         }
 
@@ -652,7 +656,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(0, 152, 234, 0.1);
             border-radius: 10px;
         }
 
@@ -711,7 +715,7 @@
         }
 
         .wallet-info-sheet {
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(0, 152, 234, 0.1);
             padding: 16px;
             border-radius: 12px;
             margin-bottom: 20px;
@@ -748,7 +752,7 @@
 
         .buy-option.featured {
             border-color: var(--primary-color);
-            background: rgba(99, 102, 241, 0.05);
+            background: rgba(0, 152, 234, 0.05);
         }
 
         .option-header {
@@ -922,7 +926,7 @@
 
         .kyc-step.active {
             opacity: 1;
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(0, 152, 234, 0.1);
         }
 
         .step-number {
@@ -1010,12 +1014,12 @@
         }
 
         .transaction-status {
-            background: rgba(99, 102, 241, 0.1);
+            background: rgba(0, 152, 234, 0.1);
             padding: 16px;
             border-radius: 12px;
             text-align: center;
             font-weight: 600;
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            border: 1px solid rgba(0, 152, 234, 0.3);
         }
 
         /* Adsgram Ad Screen */
@@ -1115,7 +1119,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background: rgba(34, 197, 94, 0.9);
+            background: rgba(48, 209, 88, 0.9);
             color: white;
             padding: 20px 30px;
             border-radius: 12px;
@@ -1420,7 +1424,7 @@
     <div id="profileScreen" class="screen">
         <div class="profile-header">
             <div class="user-avatar-large">
-                <img id="profileAvatar" src="" alt="Avatar">
+                <img id="profileAvatar" src="https://cdn-icons-png.flaticon.com/512/149/149071.png" alt="Avatar">
                 <div class="premium-badge" id="profilePremiumBadge" style="display:none">⭐</div>
             </div>
             <div class="user-info">
@@ -1700,16 +1704,16 @@
             tg.expand();
             tg.disableVerticalSwipes();
             tg.enableClosingConfirmation();
-            tg.setHeaderColor('#0f172a');
-            tg.setBackgroundColor('#1e293b');
-            tg.setBottomBarColor('#1e293b');
+            tg.setHeaderColor('#000000');
+            tg.setBackgroundColor('#1C1C1E');
+            tg.setBottomBarColor('#1C1C1E');
         }
 
         // Initialize TON Connect
         let tonConnectUI;
         try {
             tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
-                manifestUrl: 'https://jamladz.github.io/Loding/tonconnect-manifest.json',
+                manifestUrl: 'https://your-app.com/tonconnect-manifest.json',
                 buttonRootId: 'ton-connect-button'
             });
         } catch (error) {
