@@ -1321,6 +1321,252 @@
             font-size: 0.85rem;
         }
 
+        /* Eligibility Bottom Sheet */
+        .eligibility-sheet {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-radius: 20px 20px 0 0;
+            z-index: 2000;
+            transition: bottom 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .eligibility-sheet.active {
+            bottom: 80px;
+        }
+
+        .eligibility-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .total-supply {
+            background: var(--gradient-primary);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            margin: 16px 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .total-supply-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .total-supply-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .eligibility-metrics {
+            padding: 0 20px;
+        }
+
+        .eligibility-metric {
+            margin-bottom: 20px;
+        }
+
+        .metric-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .metric-label {
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .metric-progress {
+            height: 8px;
+            background: var(--surface-light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 4px;
+        }
+
+        .metric-progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .ton-purchase {
+            background: var(--surface-light);
+            padding: 16px;
+            border-radius: 12px;
+            margin: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .ton-purchase-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pi-logo {
+            width: 24px;
+            height: 24px;
+        }
+
+        .progress-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-weight: 600;
+            width: calc(100% - 40px);
+            margin: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .progress-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Platforms Bottom Sheet */
+        .platforms-sheet {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            right: 0;
+            background: var(--surface);
+            border-radius: 20px 20px 0 0;
+            z-index: 2000;
+            transition: bottom 0.3s ease;
+            box-shadow: var(--shadow-lg);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .platforms-sheet.active {
+            bottom: 80px;
+        }
+
+        .platforms-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 20px;
+        }
+
+        .platform-item {
+            background: var(--background);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .platform-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .platform-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+        }
+
+        .platform-info {
+            flex: 1;
+        }
+
+        .platform-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .platform-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .withdraw-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .withdraw-btn:hover {
+            background: var(--primary-dark);
+        }
+
+        /* Pi Balance Section */
+        .pi-balance-section {
+            background: var(--surface-light);
+            padding: 16px;
+            border-radius: 12px;
+            margin: 20px;
+            text-align: center;
+        }
+
+        .pi-balance-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .pi-balance-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* Withdraw Modal */
+        .withdraw-modal {
+            text-align: center;
+        }
+
+        .withdraw-amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .platform-logo-large {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            margin: 0 auto 16px;
+        }
+
         /* Responsive */
         @media (max-width: 480px) {
             .screen {
@@ -1604,6 +1850,10 @@
                     <span id="pointsChannel">0 points</span>
                 </div>
                 <div class="point-item">
+                    <span>TON Purchases</span>
+                    <span id="pointsTonPurchase">0 points</span>
+                </div>
+                <div class="point-item">
                     <span>Referrals</span>
                     <span id="pointsReferrals">0 points</span>
                 </div>
@@ -1795,6 +2045,154 @@
         </div>
     </div>
 
+    <!-- Eligibility Bottom Sheet -->
+    <div id="eligibilitySheet" class="eligibility-sheet">
+        <div class="eligibility-header">
+            <h3>Verify Eligibility</h3>
+            <button class="sheet-close" id="closeEligibilityBtn">×</button>
+        </div>
+        
+        <div class="total-supply">
+            <div class="total-supply-value">100,000,000 Pi Swap</div>
+            <div class="total-supply-label">Total Supply</div>
+        </div>
+        
+        <div class="eligibility-metrics">
+            <div class="eligibility-metric">
+                <div class="metric-header">
+                    <span class="metric-label">Daily Claims</span>
+                    <span class="metric-value" id="dailyClaimsValue">0%</span>
+                </div>
+                <div class="metric-progress">
+                    <div class="metric-progress-fill" id="dailyClaimsProgress" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="eligibility-metric">
+                <div class="metric-header">
+                    <span class="metric-label">Tasks Completed</span>
+                    <span class="metric-value" id="tasksCompletedValue">0%</span>
+                </div>
+                <div class="metric-progress">
+                    <div class="metric-progress-fill" id="tasksCompletedProgress" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="eligibility-metric">
+                <div class="metric-header">
+                    <span class="metric-label">KYC Verified</span>
+                    <span class="metric-value" id="kycVerifiedValue">0%</span>
+                </div>
+                <div class="metric-progress">
+                    <div class="metric-progress-fill" id="kycVerifiedProgress" style="width: 0%"></div>
+                </div>
+            </div>
+            
+            <div class="eligibility-metric">
+                <div class="metric-header">
+                    <span class="metric-label">Channel Member</span>
+                    <span class="metric-value" id="channelMemberValue">0%</span>
+                </div>
+                <div class="metric-progress">
+                    <div class="metric-progress-fill" id="channelMemberProgress" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="ton-purchase">
+            <div class="ton-purchase-info">
+                <img src="https://img.icons8.com/ios/50/pi.png" class="pi-logo">
+                <span>TON purchased for Pi Swap</span>
+            </div>
+            <div class="ton-purchase-rate">
+                <span>1 TON = 1000 points</span>
+            </div>
+        </div>
+        
+        <button class="progress-btn" id="progressPlatformsBtn">Progress</button>
+    </div>
+
+    <!-- Platforms Bottom Sheet -->
+    <div id="platformsSheet" class="platforms-sheet">
+        <div class="sheet-header">
+            <h3>Centralized Platforms</h3>
+            <button class="sheet-close" id="closePlatformsBtn">×</button>
+        </div>
+        
+        <div class="pi-balance-section">
+            <div class="pi-balance-value">
+                <img src="https://img.icons8.com/ios/50/pi.png" class="pi-logo">
+                <span id="platformPiBalance">0</span>
+                <span>π</span>
+            </div>
+            <div class="pi-balance-label">Your Pi Swap Balance</div>
+        </div>
+        
+        <div class="platforms-grid">
+            <div class="platform-item" data-platform="binance">
+                <img src="https://i.suar.me/j5YVz/l" class="platform-logo" alt="Binance">
+                <div class="platform-info">
+                    <div class="platform-name">Binance</div>
+                    <div class="platform-desc">World's largest crypto exchange</div>
+                </div>
+                <button class="withdraw-btn" data-platform="binance">Withdraw</button>
+            </div>
+            
+            <div class="platform-item" data-platform="okx">
+                <img src="https://i.suar.me/NzmZZ/l" class="platform-logo" alt="OKX">
+                <div class="platform-info">
+                    <div class="platform-name">OKX</div>
+                    <div class="platform-desc">Leading crypto trading platform</div>
+                </div>
+                <button class="withdraw-btn" data-platform="okx">Withdraw</button>
+            </div>
+            
+            <div class="platform-item" data-platform="bybit">
+                <img src="https://i.suar.me/OzKQ8/l" class="platform-logo" alt="Bybit">
+                <div class="platform-info">
+                    <div class="platform-name">Bybit</div>
+                    <div class="platform-desc">Professional crypto exchange</div>
+                </div>
+                <button class="withdraw-btn" data-platform="bybit">Withdraw</button>
+            </div>
+            
+            <div class="platform-item" data-platform="bitget">
+                <img src="https://i.suar.me/dp7q9/l" class="platform-logo" alt="Bitget">
+                <div class="platform-info">
+                    <div class="platform-name">Bitget</div>
+                    <div class="platform-desc">Secure crypto trading</div>
+                </div>
+                <button class="withdraw-btn" data-platform="bitget">Withdraw</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Withdraw Modal -->
+    <div id="withdrawModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="withdrawModalTitle">Withdraw Pi Swap</h3>
+                <button class="modal-close" id="closeWithdrawBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="withdraw-modal">
+                    <img id="withdrawPlatformLogo" src="https://i.suar.me/j5YVz/l" class="platform-logo-large" alt="Platform">
+                    <div class="withdraw-amount">
+                        <span id="withdrawPiAmount">0</span>
+                        <span>π</span>
+                    </div>
+                    <div class="coming-soon-content">
+                        <div class="soon-icon">🚀</div>
+                        <p>Withdrawal feature is under development and will be available soon!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="closeWithdrawModalBtn">OK</button>
+            </div>
+        </div>
+    </div>
+
     <!-- KYC Modal -->
     <div id="kycModal" class="modal">
         <div class="modal-content">
@@ -1967,11 +2365,14 @@
             gameScore: 0,
             gamePointsCollected: 0,
             plushPepeProgress: 0,
-            gameStartTime: null
+            gameStartTime: null,
+            tonPurchased: 0
         };
 
         // Game Configuration
-        const GAME_POINTS_PER_PI = 4000; // 4000 points = 4 π
+        const GAME_POINTS_PER_PI = 1000; // 1000 points = 1 π
+        const GAME_PI_PER_4000_POINTS = 4; // 4000 points = 4 π
+        const TON_TO_AIRDROP_POINTS = 1000; // 1 TON = 1000 airdrop points
         const PLUSH_PEPE_DISTRIBUTION_END_DATE = new Date();
         PLUSH_PEPE_DISTRIBUTION_END_DATE.setMonth(PLUSH_PEPE_DISTRIBUTION_END_DATE.getMonth() + 5); // 5 months from now
 
@@ -2226,8 +2627,8 @@
                 gameIframe = null;
             }
             
-            // Calculate earned Pi based on score
-            const earnedPi = Math.floor(userData.gameScore / GAME_POINTS_PER_PI) * 4;
+            // Calculate earned Pi based on score - NEW LOGIC: 4000 points = 4 π
+            const earnedPi = Math.floor(userData.gameScore / 4000) * GAME_PI_PER_4000_POINTS;
             
             if (earnedPi > 0) {
                 userData.piBalance += earnedPi;
@@ -2237,7 +2638,7 @@
                 
                 saveUserData();
                 updateUI();
-                showSuccessMessage(`✅ You earned ${earnedPi} π from the game!`);
+                showSuccessMessage(`✅ You earned ${earnedPi} π from the game! (${userData.gameScore} points)`);
             } else {
                 showNotification('Game completed! Try again to earn more points.', 'info');
             }
@@ -2261,9 +2662,9 @@
                     
                     // Check if we've reached a multiple of 4000 points
                     if (userData.gameScore > userData.gamePointsCollected && 
-                        userData.gameScore % GAME_POINTS_PER_PI === 0) {
+                        userData.gameScore % 4000 === 0) {
                         userData.gamePointsCollected = userData.gameScore;
-                        showNotification(`You reached ${userData.gameScore} points! 4 π will be awarded when you finish the game.`, 'success');
+                        showNotification(`You reached ${userData.gameScore} points! ${GAME_PI_PER_4000_POINTS} π will be awarded when you finish the game.`, 'success');
                     }
                 } else {
                     clearInterval(scoreInterval);
@@ -2446,6 +2847,7 @@
             document.getElementById('pointsTasks').textContent = userData.tasksCompleted * 10 + ' points';
             document.getElementById('pointsKYC').textContent = (userData.kycVerified ? 200 : 0) + ' points';
             document.getElementById('pointsChannel').textContent = (userData.joinedChannel ? 100 : 0) + ' points';
+            document.getElementById('pointsTonPurchase').textContent = (userData.tonPurchased * TON_TO_AIRDROP_POINTS) + ' points';
             document.getElementById('pointsReferrals').textContent = userData.referralCount * 50 + ' points';
         }
 
@@ -2578,16 +2980,14 @@
                 saveUserData();
                 updateUI();
                 
-                // Show checkmark after 5 seconds
-                setTimeout(() => {
-                    watchAdBtn.innerHTML = '<span>✅ Completed</span>';
-                    setTimeout(() => {
-                        watchAdBtn.innerHTML = originalText;
-                        watchAdBtn.disabled = false;
-                    }, 2000);
-                }, 5000);
+                // Show success message immediately - Green success message
+                showSuccessMessage('✅ Ad watched successfully! +1 π');
                 
-                showSuccessMessage('+1 π earned from advertisement!');
+                // Reset button after 5 seconds
+                setTimeout(() => {
+                    watchAdBtn.disabled = false;
+                    watchAdBtn.innerHTML = originalText;
+                }, 5000);
             } catch (error) {
                 showNotification('Ad failed, please try again', 'error');
                 watchAdBtn.disabled = false;
@@ -2676,6 +3076,8 @@
                     // Add Pi Swap tokens to user balance
                     userData.piBalance += amount;
                     userData.totalEarned += amount;
+                    userData.tonPurchased += price;
+                    userData.airdropPoints += price * TON_TO_AIRDROP_POINTS; // 1 TON = 1000 points
                     
                     saveUserData();
                     updateUI();
@@ -2683,7 +3085,7 @@
                     setTimeout(() => {
                         closeModal('transactionModal');
                         closeShopSheet();
-                        showSuccessMessage(`✅ Successfully purchased ${amount} π!`);
+                        showSuccessMessage(`✅ Successfully purchased ${amount} π! +${price * TON_TO_AIRDROP_POINTS} airdrop points`);
                     }, 2000);
                 }
             } catch (error) {
@@ -2694,8 +3096,114 @@
             }
         }
 
+        // Function to show the eligibility bottom sheet
+        function openEligibilitySheet() {
+            document.getElementById('eligibilitySheet').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+            
+            // Update the progress bars
+            updateEligibilityProgress();
+        }
+
+        // Function to close the eligibility bottom sheet
+        function closeEligibilitySheet() {
+            document.getElementById('eligibilitySheet').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        // Function to update eligibility progress bars
+        function updateEligibilityProgress() {
+            // Daily Claims progress (based on last claim time)
+            const now = Date.now();
+            const lastClaim = userData.lastClaim || 0;
+            const timeSinceLastClaim = now - lastClaim;
+            const dailyClaimProgress = Math.min((timeSinceLastClaim / (24 * 60 * 60 * 1000)) * 100, 100);
+            
+            document.getElementById('dailyClaimsProgress').style.width = dailyClaimProgress + '%';
+            document.getElementById('dailyClaimsValue').textContent = Math.round(dailyClaimProgress) + '%';
+            
+            // Tasks Completed progress
+            const tasksProgress = Math.min((userData.tasksCompleted / 10) * 100, 100);
+            document.getElementById('tasksCompletedProgress').style.width = tasksProgress + '%';
+            document.getElementById('tasksCompletedValue').textContent = Math.round(tasksProgress) + '%';
+            
+            // KYC Verified progress
+            const kycProgress = userData.kycVerified ? 100 : 0;
+            document.getElementById('kycVerifiedProgress').style.width = kycProgress + '%';
+            document.getElementById('kycVerifiedValue').textContent = kycProgress + '%';
+            
+            // Channel Member progress
+            const channelProgress = userData.joinedChannel ? 100 : 0;
+            document.getElementById('channelMemberProgress').style.width = channelProgress + '%';
+            document.getElementById('channelMemberValue').textContent = channelProgress + '%';
+        }
+
+        // Function to show the platforms bottom sheet
+        function openPlatformsSheet() {
+            document.getElementById('platformsSheet').classList.add('active');
+            document.getElementById('platformPiBalance').textContent = userData.piBalance;
+        }
+
+        // Function to close the platforms bottom sheet
+        function closePlatformsSheet() {
+            document.getElementById('platformsSheet').classList.remove('active');
+        }
+
+        // Function to open withdraw modal
+        function openWithdrawModal(platform) {
+            const modal = document.getElementById('withdrawModal');
+            const title = document.getElementById('withdrawModalTitle');
+            const logo = document.getElementById('withdrawPlatformLogo');
+            const amount = document.getElementById('withdrawPiAmount');
+            
+            // Set platform-specific content
+            let platformName = '';
+            let platformLogo = '';
+            
+            switch(platform) {
+                case 'binance':
+                    platformName = 'Binance';
+                    platformLogo = 'https://i.suar.me/j5YVz/l';
+                    break;
+                case 'okx':
+                    platformName = 'OKX';
+                    platformLogo = 'https://i.suar.me/NzmZZ/l';
+                    break;
+                case 'bybit':
+                    platformName = 'Bybit';
+                    platformLogo = 'https://i.suar.me/OzKQ8/l';
+                    break;
+                case 'bitget':
+                    platformName = 'Bitget';
+                    platformLogo = 'https://i.suar.me/dp7q9/l';
+                    break;
+            }
+            
+            title.textContent = `Withdraw to ${platformName}`;
+            logo.src = platformLogo;
+            amount.textContent = userData.piBalance;
+            
+            openModal('withdrawModal');
+        }
+
+        // Function to close withdraw modal
+        function closeWithdrawModal() {
+            closeModal('withdrawModal');
+        }
+
+        // Function to show success message
+        function showSuccessMessage(message) {
+            const successMessage = document.getElementById('successMessage');
+            successMessage.innerHTML = `<div>${message}</div>`;
+            successMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+
         function verifyAirdrop() {
-            showComingSoon();
+            openEligibilitySheet();
         }
 
         function generateReferralLink() {
@@ -2728,16 +3236,6 @@
                 setTimeout(() => {
                     document.body.removeChild(notification);
                 }, 300);
-            }, 3000);
-        }
-
-        function showSuccessMessage(message) {
-            const successMessage = document.getElementById('successMessage');
-            successMessage.innerHTML = `<div>${message}</div>`;
-            successMessage.style.display = 'block';
-            
-            setTimeout(() => {
-                successMessage.style.display = 'none';
             }, 3000);
         }
 
@@ -2924,10 +3422,34 @@
                 closeModal('kycModal');
                 closeModal('transactionModal');
                 closeModal('comingSoonModal');
+                closeEligibilitySheet();
+                closePlatformsSheet();
+                closeWithdrawModal();
             });
 
             // KYC Setting click
             document.getElementById('kycSetting').addEventListener('click', startKYCVerification);
+
+            // Eligibility Sheet
+            document.getElementById('closeEligibilityBtn').addEventListener('click', closeEligibilitySheet);
+            
+            // Progress Platforms Button
+            document.getElementById('progressPlatformsBtn').addEventListener('click', openPlatformsSheet);
+            
+            // Close Platforms Button
+            document.getElementById('closePlatformsBtn').addEventListener('click', closePlatformsSheet);
+            
+            // Withdraw buttons in platforms sheet
+            document.querySelectorAll('.withdraw-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const platform = this.getAttribute('data-platform');
+                    openWithdrawModal(platform);
+                });
+            });
+
+            // Withdraw Modal
+            document.getElementById('closeWithdrawBtn').addEventListener('click', closeWithdrawModal);
+            document.getElementById('closeWithdrawModalBtn').addEventListener('click', closeWithdrawModal);
         });
 
         // Add CSS animations
