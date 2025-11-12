@@ -1135,13 +1135,20 @@
             background-color: #1a1a1a;
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 0 15px;
             z-index: 1000;
             box-shadow: 0 2px 5px rgba(0,0,0,0.3);
         }
 
-        .home-button {
-            background-color: #4CAF50;
+        .game-score {
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        .game-close-btn {
+            background-color: rgba(255, 0, 0, 0.7);
             color: white;
             border: none;
             padding: 8px 16px;
@@ -1154,12 +1161,8 @@
             transition: background-color 0.3s;
         }
 
-        .home-button:hover {
-            background-color: #45a049;
-        }
-
-        .home-button i {
-            font-size: 16px;
+        .game-close-btn:hover {
+            background-color: rgba(255, 0, 0, 0.9);
         }
 
         .game-container {
@@ -1247,6 +1250,75 @@
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+        }
+
+        /* Countdown Timer */
+        .countdown-timer {
+            background: var(--gradient-secondary);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .countdown-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .countdown-display {
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: monospace;
+            margin-bottom: 8px;
+        }
+
+        .countdown-subtitle {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        /* Plush Pepe Section */
+        .plush-pepe-section {
+            background: var(--surface);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .plush-pepe-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: block;
+        }
+
+        .plush-pepe-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .plush-pepe-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .plush-pepe-progress {
+            margin-top: 16px;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
         }
 
         /* Responsive */
@@ -1467,7 +1539,7 @@
                     <div class="task-details">
                         <h4>Invite Friends</h4>
                         <p>Invite friends to join Pi Swap</p>
-                        <div class="task-reward">+25 π per friend</div>
+                        <div class="task-reward">Earn digital dollars soon</div>
                     </div>
                 </div>
                 <div class="task-status">
@@ -1586,6 +1658,30 @@
             </div>
         </div>
 
+        <!-- Countdown Timer -->
+        <div class="countdown-timer">
+            <div class="countdown-title">Plush Pepe Distribution</div>
+            <div class="countdown-display" id="countdownDisplay">150d 00h 00m 00s</div>
+            <div class="countdown-subtitle">Time remaining for Plush Pepe distribution</div>
+        </div>
+
+        <!-- Plush Pepe Section -->
+        <div class="plush-pepe-section">
+            <img src="https://i.suar.me/opnEg/l" class="plush-pepe-icon" alt="Plush Pepe">
+            <div class="plush-pepe-title">Plush Pepe NFT</div>
+            <div class="plush-pepe-desc">Invite friends to earn exclusive Plush Pepe NFTs. The more referrals, the higher your chances!</div>
+            
+            <div class="plush-pepe-progress">
+                <div class="progress-label">
+                    <span>Your Progress</span>
+                    <span id="plushPepeProgress">0/5</span>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="plushPepeProgressBar" style="width: 0%"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Referral Section -->
         <div class="referral-card">
             <h3>🎁 Referral Program</h3>
@@ -1603,7 +1699,7 @@
                 <input type="text" class="referral-link" id="referralLink" readonly value="Loading...">
                 <button class="copy-btn" id="copyReferralBtn">📋 Copy</button>
             </div>
-            <p class="verify-note">Share your link and earn 25 π for each friend who joins! Soon, we'll update to digital dollars.</p>
+            <p class="verify-note">Share your link and earn rewards! Soon, we'll update to digital dollars.</p>
         </div>
 
         <div class="profile-actions">
@@ -1809,18 +1905,16 @@
         </div>
     </div>
 
-    <!-- Game Modal -->
-    <div id="gameModal" class="modal">
-        <div class="modal-content fullscreen">
-            <div class="modal-header">
-                <h3>Subway Surfers</h3>
-                <button class="modal-close" id="closeGameBtn">×</button>
-            </div>
-            <div class="modal-body fullscreen">
-                <div class="game-container">
-                    <iframe class="game-frame" src="https://freeonlinegames.github.io/subway-surfers-tokyo/" frameborder="0" allowfullscreen></iframe>
-                </div>
-            </div>
+    <!-- Game Screen -->
+    <div id="gameScreen">
+        <div class="game-top-bar">
+            <div class="game-score">Score: <span id="gameScore">0</span></div>
+            <button class="game-close-btn" id="closeGameBtn">
+                <span>X</span>
+            </button>
+        </div>
+        <div class="game-container">
+            <iframe class="game-frame" src="https://freeonlinegames.github.io/subway-surfers-tokyo/" frameborder="0" allowfullscreen></iframe>
         </div>
     </div>
 
@@ -1869,8 +1963,17 @@
             referralEarnings: 0,
             referrer: null,
             firstLoginBonusGiven: false,
-            gameAdWatched: false
+            gameAdWatched: false,
+            gameScore: 0,
+            gamePointsCollected: 0,
+            plushPepeProgress: 0,
+            gameStartTime: null
         };
+
+        // Game Configuration
+        const GAME_POINTS_PER_PI = 4000; // 4000 points = 4 π
+        const PLUSH_PEPE_DISTRIBUTION_END_DATE = new Date();
+        PLUSH_PEPE_DISTRIBUTION_END_DATE.setMonth(PLUSH_PEPE_DISTRIBUTION_END_DATE.getMonth() + 5); // 5 months from now
 
         // TON Wallet Configuration - Replace with your actual wallet address
         const RECIPIENT_WALLET = 'UQCTZAMbXoN5T43K9gJXH8GYWBmIstXrUrdoV9kv3btN1Ad3';
@@ -2087,41 +2190,99 @@
                 return;
             }
 
-            openGameModal();
+            openGameScreen();
         }
 
-        function openGameModal() {
-            document.getElementById('gameModal').classList.add('active');
-            document.getElementById('overlay').classList.add('active');
+        function openGameScreen() {
+            document.getElementById('gameScreen').style.display = 'block';
+            userData.gameStartTime = Date.now();
+            userData.gameScore = 0;
+            updateGameScore();
+            
+            // Simulate score updates for demo purposes
+            startScoreSimulation();
         }
 
-        function closeGameModal() {
-            document.getElementById('gameModal').classList.remove('active');
-            document.getElementById('overlay').classList.remove('active');
+        function closeGameScreen() {
+            document.getElementById('gameScreen').style.display = 'none';
+            
+            // Calculate earned Pi based on score
+            const earnedPi = Math.floor(userData.gameScore / GAME_POINTS_PER_PI) * 4;
+            
+            if (earnedPi > 0) {
+                userData.piBalance += earnedPi;
+                userData.totalEarned += earnedPi;
+                userData.tasksCompleted += 1;
+                userData.airdropPoints += earnedPi / 2;
+                
+                saveUserData();
+                updateUI();
+                showSuccessMessage(`Game completed! You earned ${earnedPi} π!`);
+            }
+            
+            // Reset game state
+            userData.gameScore = 0;
+            userData.gameAdWatched = false;
+        }
+
+        function updateGameScore() {
+            document.getElementById('gameScore').textContent = userData.gameScore;
+        }
+
+        function startScoreSimulation() {
+            // For demo purposes, simulate score increasing
+            // In a real implementation, this would come from the game iframe
+            const scoreInterval = setInterval(() => {
+                if (document.getElementById('gameScreen').style.display === 'block') {
+                    userData.gameScore += Math.floor(Math.random() * 100) + 50;
+                    updateGameScore();
+                    
+                    // Check if we've reached a multiple of 4000 points
+                    if (userData.gameScore > userData.gamePointsCollected && 
+                        userData.gameScore % GAME_POINTS_PER_PI === 0) {
+                        userData.gamePointsCollected = userData.gameScore;
+                        showNotification(`You reached ${userData.gameScore} points! 4 π will be awarded when you finish the game.`, 'success');
+                    }
+                } else {
+                    clearInterval(scoreInterval);
+                }
+            }, 1000);
         }
 
         async function playGameWithAd() {
             try {
                 await showAdsgramAd();
                 
-                // After ad completion, enable game and give reward
+                // After ad completion, enable game
                 userData.gameAdWatched = true;
-                userData.piBalance += 5;
-                userData.totalEarned += 5;
-                userData.tasksCompleted += 1;
-                userData.airdropPoints += 1;
-
                 saveUserData();
-                updateUI();
-                showSuccessMessage('Ad completed! +5 π earned. Game unlocked!');
                 
                 // Open game after ad
                 setTimeout(() => {
-                    openGameModal();
+                    openGameScreen();
                 }, 1000);
             } catch (error) {
                 showNotification('Ad failed, please try again', 'error');
             }
+        }
+
+        // Countdown Timer Functions
+        function updateCountdown() {
+            const now = new Date();
+            const timeRemaining = PLUSH_PEPE_DISTRIBUTION_END_DATE - now;
+            
+            if (timeRemaining <= 0) {
+                document.getElementById('countdownDisplay').textContent = "Distribution Ended";
+                return;
+            }
+            
+            const days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+            
+            document.getElementById('countdownDisplay').textContent = 
+                `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
         }
 
         // Load user data from localStorage
@@ -2167,10 +2328,14 @@
             document.getElementById('profileTotalEarned').textContent = userData.totalEarned + ' π';
             document.getElementById('profileTasksDone').textContent = userData.tasksCompleted;
 
-            // Update referral stats
+            // Update referral stats (hidden counts)
             document.getElementById('referralCount').textContent = userData.referralCount;
             document.getElementById('referralEarnings').textContent = userData.referralEarnings + ' π';
             document.getElementById('referralLink').value = generateReferralLink();
+
+            // Update Plush Pepe progress
+            document.getElementById('plushPepeProgress').textContent = `${userData.plushPepeProgress}/5`;
+            document.getElementById('plushPepeProgressBar').style.width = `${(userData.plushPepeProgress / 5) * 100}%`;
 
             // Update airdrop
             document.getElementById('airdropTier').textContent = userData.airdropTier;
@@ -2648,7 +2813,7 @@
             document.getElementById('playGameBtn').addEventListener('click', playGameWithAd);
 
             // Close game button
-            document.getElementById('closeGameBtn').addEventListener('click', closeGameModal);
+            document.getElementById('closeGameBtn').addEventListener('click', closeGameScreen);
 
             // Tasks
             document.getElementById('watchAdBtn').addEventListener('click', watchAdvertisement);
@@ -2715,7 +2880,6 @@
                 closeModal('kycModal');
                 closeModal('transactionModal');
                 closeModal('comingSoonModal');
-                closeModal('gameModal');
             });
 
             // KYC Setting click
@@ -2740,6 +2904,7 @@
         // Initialize timers
         setInterval(updateClaimTimer, 60000); // Update every minute
         setInterval(updateTaskStatuses, 1000); // Update every second for cooldown timers
+        setInterval(updateCountdown, 1000); // Update countdown every second
     </script>
 </body>
 </html>
