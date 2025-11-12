@@ -291,6 +291,49 @@
             margin-bottom: 8px;
         }
 
+        /* Game Image Section */
+        .game-image-section {
+            margin-bottom: 24px;
+        }
+
+        .game-image-section h3 {
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+        }
+
+        .game-image-container {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .game-image-container:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .game-image {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .game-image-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .game-image-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
         /* Tasks Screen */
         .screen-header {
             margin-bottom: 24px;
@@ -830,6 +873,14 @@
             max-width: 320px;
         }
 
+        .modal-content.fullscreen {
+            max-width: 100%;
+            max-height: 100%;
+            border-radius: 0;
+            width: 100%;
+            height: 100%;
+        }
+
         @keyframes modalSlideIn {
             from { transform: scale(0.9); opacity: 0; }
             to { transform: scale(1); opacity: 1; }
@@ -858,6 +909,11 @@
 
         .modal-body {
             padding: 20px;
+        }
+
+        .modal-body.fullscreen {
+            padding: 0;
+            height: calc(100vh - 60px);
         }
 
         .modal-footer {
@@ -1058,6 +1114,69 @@
             background-color: rgba(255, 0, 0, 0.8);
         }
 
+        /* Game Screen */
+        #gameScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: black;
+            z-index: 9999;
+            display: none;
+        }
+
+        .game-top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #1a1a1a;
+            display: flex;
+            align-items: center;
+            padding: 0 15px;
+            z-index: 1000;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        .home-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background-color 0.3s;
+        }
+
+        .home-button:hover {
+            background-color: #45a049;
+        }
+
+        .home-button i {
+            font-size: 16px;
+        }
+
+        .game-container {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            width: 100vw;
+            height: calc(100vh - 50px);
+            background: #000;
+        }
+
+        .game-frame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
         /* TON Connect Button */
         .ton-connect-button {
             margin-top: 10px;
@@ -1220,6 +1339,16 @@
                 <img src="https://img.icons8.com/ios/50/shop.png" class="btn-icon">
                 <span>Buy Pi Swap</span>
             </button>
+        </div>
+
+        <!-- Game Image Section -->
+        <div class="game-image-section">
+            <h3>Play & Earn Pi</h3>
+            <div class="game-image-container" id="playGameBtn">
+                <img src="https://i.suar.me/yEQ02/l" class="game-image" alt="Play Game">
+                <div class="game-image-title">Play Subway Surfers</div>
+                <div class="game-image-subtitle">Watch an ad to play and earn Pi!</div>
+            </div>
         </div>
 
         <div class="stats-grid">
@@ -1474,7 +1603,7 @@
                 <input type="text" class="referral-link" id="referralLink" readonly value="Loading...">
                 <button class="copy-btn" id="copyReferralBtn">📋 Copy</button>
             </div>
-            <p class="verify-note">Share your link and earn 25 π for each friend who joins!</p>
+            <p class="verify-note">Share your link and earn 25 π for each friend who joins! Soon, we'll update to digital dollars.</p>
         </div>
 
         <div class="profile-actions">
@@ -1680,6 +1809,21 @@
         </div>
     </div>
 
+    <!-- Game Modal -->
+    <div id="gameModal" class="modal">
+        <div class="modal-content fullscreen">
+            <div class="modal-header">
+                <h3>Subway Surfers</h3>
+                <button class="modal-close" id="closeGameBtn">×</button>
+            </div>
+            <div class="modal-body fullscreen">
+                <div class="game-container">
+                    <iframe class="game-frame" src="https://freeonlinegames.github.io/subway-surfers-tokyo/" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Adsgram Ad Screen -->
     <div id="adScreen">
         <button id="closeAdBtn">✕</button>
@@ -1724,7 +1868,8 @@
             referralCount: 0,
             referralEarnings: 0,
             referrer: null,
-            firstLoginBonusGiven: false
+            firstLoginBonusGiven: false,
+            gameAdWatched: false
         };
 
         // TON Wallet Configuration - Replace with your actual wallet address
@@ -1933,6 +2078,50 @@
             
             adScreen.style.display = 'none';
             adFrame.src = 'about:blank';
+        }
+
+        // Game Functions
+        function openGame() {
+            if (!userData.gameAdWatched) {
+                showNotification('Please watch an ad first to play the game', 'info');
+                return;
+            }
+
+            openGameModal();
+        }
+
+        function openGameModal() {
+            document.getElementById('gameModal').classList.add('active');
+            document.getElementById('overlay').classList.add('active');
+        }
+
+        function closeGameModal() {
+            document.getElementById('gameModal').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+        }
+
+        async function playGameWithAd() {
+            try {
+                await showAdsgramAd();
+                
+                // After ad completion, enable game and give reward
+                userData.gameAdWatched = true;
+                userData.piBalance += 5;
+                userData.totalEarned += 5;
+                userData.tasksCompleted += 1;
+                userData.airdropPoints += 1;
+
+                saveUserData();
+                updateUI();
+                showSuccessMessage('Ad completed! +5 π earned. Game unlocked!');
+                
+                // Open game after ad
+                setTimeout(() => {
+                    openGameModal();
+                }, 1000);
+            } catch (error) {
+                showNotification('Ad failed, please try again', 'error');
+            }
         }
 
         // Load user data from localStorage
@@ -2206,10 +2395,11 @@
                 return;
             }
 
+            // Updated channel link to PiAnnouncements
             if (tg) {
-                tg.openTelegramLink('https://t.me/piswapnetwork');
+                tg.openTelegramLink('https://t.me/PiAnnouncements');
             } else {
-                window.open('https://t.me/piswapnetwork', '_blank');
+                window.open('https://t.me/PiAnnouncements', '_blank');
             }
             
             // Simulate channel join verification
@@ -2454,6 +2644,12 @@
                 });
             });
 
+            // Game image
+            document.getElementById('playGameBtn').addEventListener('click', playGameWithAd);
+
+            // Close game button
+            document.getElementById('closeGameBtn').addEventListener('click', closeGameModal);
+
             // Tasks
             document.getElementById('watchAdBtn').addEventListener('click', watchAdvertisement);
             document.getElementById('joinChannelBtn').addEventListener('click', joinTelegramChannel);
@@ -2519,6 +2715,7 @@
                 closeModal('kycModal');
                 closeModal('transactionModal');
                 closeModal('comingSoonModal');
+                closeModal('gameModal');
             });
 
             // KYC Setting click
