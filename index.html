@@ -1687,11 +1687,11 @@
             <h3>🎁 Referral Program</h3>
             <div class="referral-stats">
                 <div class="referral-stat">
-                    <div class="stat-value" id="referralCount">0</div>
+                    <div class="stat-value" id="referralCount" style="display:none"></div>
                     <div class="stat-label">Total Referrals</div>
                 </div>
                 <div class="referral-stat">
-                    <div class="stat-value" id="referralEarnings">0 π</div>
+                    <div class="stat-value" id="referralEarnings" style="display:none"></div>
                     <div class="stat-label">Referral Earnings</div>
                 </div>
             </div>
@@ -1914,7 +1914,7 @@
             </button>
         </div>
         <div class="game-container">
-            <iframe class="game-frame" src="https://freeonlinegames.github.io/subway-surfers-tokyo/" frameborder="0" allowfullscreen></iframe>
+            <iframe class="game-frame" id="gameIframe" src="about:blank" frameborder="0" allowfullscreen></iframe>
         </div>
     </div>
 
@@ -1974,6 +1974,10 @@
         const GAME_POINTS_PER_PI = 4000; // 4000 points = 4 π
         const PLUSH_PEPE_DISTRIBUTION_END_DATE = new Date();
         PLUSH_PEPE_DISTRIBUTION_END_DATE.setMonth(PLUSH_PEPE_DISTRIBUTION_END_DATE.getMonth() + 5); // 5 months from now
+
+        // Game variables
+        let scoreInterval = null;
+        let gameIframe = null;
 
         // TON Wallet Configuration - Replace with your actual wallet address
         const RECIPIENT_WALLET = 'UQCTZAMbXoN5T43K9gJXH8GYWBmIstXrUrdoV9kv3btN1Ad3';
@@ -2199,12 +2203,28 @@
             userData.gameScore = 0;
             updateGameScore();
             
+            // Load the game iframe
+            gameIframe = document.getElementById('gameIframe');
+            gameIframe.src = 'https://freeonlinegames.github.io/subway-surfers-tokyo/';
+            
             // Simulate score updates for demo purposes
             startScoreSimulation();
         }
 
         function closeGameScreen() {
             document.getElementById('gameScreen').style.display = 'none';
+            
+            // Stop the game simulation
+            if (scoreInterval) {
+                clearInterval(scoreInterval);
+                scoreInterval = null;
+            }
+            
+            // Stop the game iframe
+            if (gameIframe) {
+                gameIframe.src = 'about:blank';
+                gameIframe = null;
+            }
             
             // Calculate earned Pi based on score
             const earnedPi = Math.floor(userData.gameScore / GAME_POINTS_PER_PI) * 4;
@@ -2217,7 +2237,9 @@
                 
                 saveUserData();
                 updateUI();
-                showSuccessMessage(`Game completed! You earned ${earnedPi} π!`);
+                showSuccessMessage(`✅ You earned ${earnedPi} π from the game!`);
+            } else {
+                showNotification('Game completed! Try again to earn more points.', 'info');
             }
             
             // Reset game state
@@ -2232,7 +2254,7 @@
         function startScoreSimulation() {
             // For demo purposes, simulate score increasing
             // In a real implementation, this would come from the game iframe
-            const scoreInterval = setInterval(() => {
+            scoreInterval = setInterval(() => {
                 if (document.getElementById('gameScreen').style.display === 'block') {
                     userData.gameScore += Math.floor(Math.random() * 100) + 50;
                     updateGameScore();
@@ -2329,8 +2351,21 @@
             document.getElementById('profileTasksDone').textContent = userData.tasksCompleted;
 
             // Update referral stats (hidden counts)
-            document.getElementById('referralCount').textContent = userData.referralCount;
-            document.getElementById('referralEarnings').textContent = userData.referralEarnings + ' π';
+            // We're hiding the zeros as requested
+            if (userData.referralCount > 0) {
+                document.getElementById('referralCount').textContent = userData.referralCount;
+                document.getElementById('referralCount').style.display = 'block';
+            } else {
+                document.getElementById('referralCount').style.display = 'none';
+            }
+            
+            if (userData.referralEarnings > 0) {
+                document.getElementById('referralEarnings').textContent = userData.referralEarnings + ' π';
+                document.getElementById('referralEarnings').style.display = 'block';
+            } else {
+                document.getElementById('referralEarnings').style.display = 'none';
+            }
+            
             document.getElementById('referralLink').value = generateReferralLink();
 
             // Update Plush Pepe progress
@@ -2507,7 +2542,7 @@
 
                 saveUserData();
                 updateUI();
-                showSuccessMessage('Successfully claimed 10 π!');
+                showSuccessMessage('✅ Successfully claimed 10 π!');
             } catch (error) {
                 showNotification('Ad failed, please try again', 'error');
             } finally {
@@ -2542,10 +2577,19 @@
 
                 saveUserData();
                 updateUI();
+                
+                // Show checkmark after 5 seconds
+                setTimeout(() => {
+                    watchAdBtn.innerHTML = '<span>✅ Completed</span>';
+                    setTimeout(() => {
+                        watchAdBtn.innerHTML = originalText;
+                        watchAdBtn.disabled = false;
+                    }, 2000);
+                }, 5000);
+                
                 showSuccessMessage('+1 π earned from advertisement!');
             } catch (error) {
                 showNotification('Ad failed, please try again', 'error');
-            } finally {
                 watchAdBtn.disabled = false;
                 watchAdBtn.innerHTML = originalText;
             }
@@ -2639,7 +2683,7 @@
                     setTimeout(() => {
                         closeModal('transactionModal');
                         closeShopSheet();
-                        showSuccessMessage(`Successfully purchased ${amount} π!`);
+                        showSuccessMessage(`✅ Successfully purchased ${amount} π!`);
                     }, 2000);
                 }
             } catch (error) {
@@ -2689,7 +2733,7 @@
 
         function showSuccessMessage(message) {
             const successMessage = document.getElementById('successMessage');
-            successMessage.innerHTML = `<div>✅ ${message}</div>`;
+            successMessage.innerHTML = `<div>${message}</div>`;
             successMessage.style.display = 'block';
             
             setTimeout(() => {
