@@ -31,6 +31,9 @@
             --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             --gradient-secondary: linear-gradient(135deg, var(--secondary-color), #FF6B00);
             --gradient-success: linear-gradient(135deg, var(--success-color), #20B24D);
+            --platinum-color: #E5E4E2;
+            --diamond-color: #B9F2FF;
+            --master-color: #FFD700;
         }
 
         * {
@@ -625,6 +628,21 @@
             font-weight: 600;
         }
 
+        .tier-badge.platinum {
+            background: linear-gradient(135deg, var(--platinum-color), #C0C0C0);
+            color: #333;
+        }
+
+        .tier-badge.diamond {
+            background: linear-gradient(135deg, var(--diamond-color), #89CFF0);
+            color: #333;
+        }
+
+        .tier-badge.master {
+            background: linear-gradient(135deg, var(--master-color), #FFA500);
+            color: #333;
+        }
+
         .profile-stats {
             background: var(--surface);
             padding: 20px;
@@ -1145,6 +1163,7 @@
             color: white;
             font-weight: bold;
             font-size: 18px;
+            display: none; /* Hidden as requested */
         }
 
         .game-close-btn {
@@ -1567,6 +1586,76 @@
             margin: 0 auto 16px;
         }
 
+        /* TON Purchases Progress Bar */
+        .ton-purchases-progress {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .ton-progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        /* Plush Pepe Verification Button */
+        .plush-pepe-verify-btn {
+            background: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 16px;
+            width: 100%;
+        }
+
+        /* Plush Pepe Verification Modal */
+        .plush-pepe-requirements {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .requirement-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px;
+            background: var(--background);
+            border-radius: 8px;
+        }
+
+        .requirement-status {
+            font-weight: 600;
+        }
+
+        .requirement-status.completed {
+            color: var(--success-color);
+        }
+
+        .requirement-status.pending {
+            color: var(--warning-color);
+        }
+
+        .plush-pepe-winner {
+            background: var(--surface-light);
+            padding: 16px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 16px;
+        }
+
+        .winner-name {
+            font-weight: 700;
+            color: var(--secondary-color);
+            margin-top: 8px;
+        }
+
         /* Responsive */
         @media (max-width: 480px) {
             .screen {
@@ -1735,8 +1824,8 @@
                     <div class="task-icon">📺</div>
                     <div class="task-details">
                         <h4>Watch Adsgram Ad</h4>
-                        <p>Watch ads every 20 seconds</p>
-                        <div class="task-reward">+1 π per ad</div>
+                        <p>Watch 15 ads to earn 100 π</p>
+                        <div class="task-reward">+100 π (15/15)</div>
                     </div>
                 </div>
                 <div class="task-status">
@@ -1794,6 +1883,23 @@
                     </button>
                 </div>
             </div>
+
+            <!-- New Task: Join TonQash -->
+            <div class="task-item" data-task="joinTonQash">
+                <div class="task-info">
+                    <div class="task-icon">🚀</div>
+                    <div class="task-details">
+                        <h4>Join TonQash Web App</h4>
+                        <p>Join TonQash once every 24 hours</p>
+                        <div class="task-reward">+40 π</div>
+                    </div>
+                </div>
+                <div class="task-status">
+                    <button class="task-action-btn" id="joinTonQashBtn">
+                        <span>Join</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1826,6 +1932,9 @@
                     <span>Bronze</span>
                     <span>Silver</span>
                     <span>Gold</span>
+                    <span>Platinum</span>
+                    <span>Diamond</span>
+                    <span>Master</span>
                 </div>
             </div>
         </div>
@@ -1919,16 +2028,31 @@
         <div class="plush-pepe-section">
             <img src="https://i.suar.me/opnEg/l" class="plush-pepe-icon" alt="Plush Pepe">
             <div class="plush-pepe-title">Plush Pepe NFT</div>
-            <div class="plush-pepe-desc">Invite friends to earn exclusive Plush Pepe NFTs. The more referrals, the higher your chances!</div>
+            <div class="plush-pepe-desc">Complete tasks to earn exclusive Plush Pepe NFTs!</div>
             
             <div class="plush-pepe-progress">
                 <div class="progress-label">
                     <span>Your Progress</span>
-                    <span id="plushPepeProgress">0/5</span>
+                    <span id="plushPepeProgress">0/3</span>
                 </div>
                 <div class="progress-bar">
                     <div class="progress-fill" id="plushPepeProgressBar" style="width: 0%"></div>
                 </div>
+            </div>
+            
+            <button class="plush-pepe-verify-btn" id="plushPepeVerifyBtn">
+                Verify Progress
+            </button>
+        </div>
+
+        <!-- TON Purchases Progress Bar -->
+        <div class="ton-purchases-progress">
+            <div class="ton-progress-header">
+                <span>TON Purchases</span>
+                <span id="tonProgressValue">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="tonPurchasesProgress" style="width: 0%"></div>
             </div>
         </div>
 
@@ -2102,10 +2226,10 @@
         <div class="ton-purchase">
             <div class="ton-purchase-info">
                 <img src="https://img.icons8.com/ios/50/pi.png" class="pi-logo">
-                <span>TON purchased for Pi Swap</span>
+                <span>TON Purchases Progress</span>
             </div>
             <div class="ton-purchase-rate">
-                <span>1 TON = 1000 points</span>
+                <span id="tonPurchasedAmount">0 TON</span>
             </div>
         </div>
         
@@ -2253,6 +2377,48 @@
         </div>
     </div>
 
+    <!-- Plush Pepe Verification Modal -->
+    <div id="plushPepeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Plush Pepe NFT Progress</h3>
+                <button class="modal-close" id="closePlushPepeBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="plush-pepe-requirements">
+                    <div class="requirement-item">
+                        <span>Login for 7 consecutive days</span>
+                        <span class="requirement-status pending" id="loginRequirement">0/7</span>
+                    </div>
+                    <div class="requirement-item">
+                        <span>Watch 200 ads</span>
+                        <span class="requirement-status pending" id="adsRequirement">0/200</span>
+                    </div>
+                    <div class="requirement-item">
+                        <span>Purchase 1 TON worth of Pi Swap</span>
+                        <span class="requirement-status pending" id="purchaseRequirement">0/1</span>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="plushPepeModalProgress" style="width: 0%"></div>
+                </div>
+                <div class="progress-label" style="margin-top: 8px;">
+                    <span>Overall Progress</span>
+                    <span id="plushPepeModalPercentage">0%</span>
+                </div>
+                
+                <div class="plush-pepe-winner">
+                    <div>This Month's Winner</div>
+                    <div class="winner-name">Sekanedr_is</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-primary" id="closePlushPepeModalBtn">OK</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Coming Soon Modal -->
     <div id="comingSoonModal" class="modal">
         <div class="modal-content small">
@@ -2351,6 +2517,7 @@
             lastClaim: null,
             lastAdWatch: null,
             lastChannelJoin: null,
+            lastTonQashJoin: null,
             joinedChannel: false,
             kycVerified: false,
             walletConnected: false,
@@ -2366,12 +2533,19 @@
             gamePointsCollected: 0,
             plushPepeProgress: 0,
             gameStartTime: null,
-            tonPurchased: 0
+            tonPurchased: 0,
+            adsWatchedCount: 0,
+            consecutiveLoginDays: 0,
+            lastLoginDate: null,
+            plushPepeRequirements: {
+                loginDays: 0,
+                adsWatched: 0,
+                tonPurchased: 0
+            }
         };
 
         // Game Configuration
-        const GAME_POINTS_PER_PI = 1000; // 1000 points = 1 π
-        const GAME_PI_PER_4000_POINTS = 4; // 4000 points = 4 π
+        const GAME_POINTS_PER_PI = 5; // Now 5 Pi per game round
         const TON_TO_AIRDROP_POINTS = 1000; // 1 TON = 1000 airdrop points
         const PLUSH_PEPE_DISTRIBUTION_END_DATE = new Date();
         PLUSH_PEPE_DISTRIBUTION_END_DATE.setMonth(PLUSH_PEPE_DISTRIBUTION_END_DATE.getMonth() + 5); // 5 months from now
@@ -2380,7 +2554,7 @@
         let scoreInterval = null;
         let gameIframe = null;
 
-        // TON Wallet Configuration - Replace with your actual wallet address
+        // TON Wallet Configuration
         const RECIPIENT_WALLET = 'UQCTZAMbXoN5T43K9gJXH8GYWBmIstXrUrdoV9kv3btN1Ad3';
 
         // Initialize TON Connect
@@ -2627,8 +2801,8 @@
                 gameIframe = null;
             }
             
-            // Calculate earned Pi based on score - NEW LOGIC: 4000 points = 4 π
-            const earnedPi = Math.floor(userData.gameScore / 4000) * GAME_PI_PER_4000_POINTS;
+            // NEW LOGIC: Each game round earns 5 π
+            const earnedPi = GAME_POINTS_PER_PI;
             
             if (earnedPi > 0) {
                 userData.piBalance += earnedPi;
@@ -2638,7 +2812,7 @@
                 
                 saveUserData();
                 updateUI();
-                showSuccessMessage(`✅ You earned ${earnedPi} π from the game! (${userData.gameScore} points)`);
+                showSuccessMessage(`✅ You earned ${earnedPi} π from the game!`);
             } else {
                 showNotification('Game completed! Try again to earn more points.', 'info');
             }
@@ -2659,13 +2833,6 @@
                 if (document.getElementById('gameScreen').style.display === 'block') {
                     userData.gameScore += Math.floor(Math.random() * 100) + 50;
                     updateGameScore();
-                    
-                    // Check if we've reached a multiple of 4000 points
-                    if (userData.gameScore > userData.gamePointsCollected && 
-                        userData.gameScore % 4000 === 0) {
-                        userData.gamePointsCollected = userData.gameScore;
-                        showNotification(`You reached ${userData.gameScore} points! ${GAME_PI_PER_4000_POINTS} π will be awarded when you finish the game.`, 'success');
-                    }
                 } else {
                     clearInterval(scoreInterval);
                 }
@@ -2718,6 +2885,8 @@
                 if (savedData.lastClaim) savedData.lastClaim = new Date(savedData.lastClaim);
                 if (savedData.lastAdWatch) savedData.lastAdWatch = new Date(savedData.lastAdWatch);
                 if (savedData.lastChannelJoin) savedData.lastChannelJoin = new Date(savedData.lastChannelJoin);
+                if (savedData.lastTonQashJoin) savedData.lastTonQashJoin = new Date(savedData.lastTonQashJoin);
+                if (savedData.lastLoginDate) savedData.lastLoginDate = new Date(savedData.lastLoginDate);
                 
                 userData = { ...userData, ...savedData };
             }
@@ -2729,7 +2898,46 @@
                 localStorage.setItem('pi_swap_first_login', 'true');
             }
             
+            // Check consecutive login days
+            checkConsecutiveLogin();
+            
             updateUI();
+        }
+
+        // Check consecutive login days
+        function checkConsecutiveLogin() {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            
+            if (!userData.lastLoginDate) {
+                // First login
+                userData.lastLoginDate = today;
+                userData.consecutiveLoginDays = 1;
+            } else {
+                const lastLogin = new Date(userData.lastLoginDate);
+                lastLogin.setHours(0, 0, 0, 0);
+                
+                const diffTime = today - lastLogin;
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                if (diffDays === 1) {
+                    // Consecutive login
+                    userData.consecutiveLoginDays += 1;
+                    userData.lastLoginDate = today;
+                } else if (diffDays > 1) {
+                    // Break in login streak
+                    userData.consecutiveLoginDays = 1;
+                    userData.lastLoginDate = today;
+                }
+                // If diffDays is 0, same day login, do nothing
+            }
+            
+            // Update Plush Pepe requirements
+            userData.plushPepeRequirements.loginDays = userData.consecutiveLoginDays;
+            userData.plushPepeRequirements.adsWatched = userData.adsWatchedCount;
+            userData.plushPepeRequirements.tonPurchased = userData.tonPurchased;
+            
+            saveUserData();
         }
 
         // Save user data to localStorage
@@ -2770,8 +2978,13 @@
             document.getElementById('referralLink').value = generateReferralLink();
 
             // Update Plush Pepe progress
-            document.getElementById('plushPepeProgress').textContent = `${userData.plushPepeProgress}/5`;
-            document.getElementById('plushPepeProgressBar').style.width = `${(userData.plushPepeProgress / 5) * 100}%`;
+            const completedRequirements = 
+                (userData.plushPepeRequirements.loginDays >= 7 ? 1 : 0) +
+                (userData.plushPepeRequirements.adsWatched >= 200 ? 1 : 0) +
+                (userData.plushPepeRequirements.tonPurchased >= 1 ? 1 : 0);
+                
+            document.getElementById('plushPepeProgress').textContent = `${completedRequirements}/3`;
+            document.getElementById('plushPepeProgressBar').style.width = `${(completedRequirements / 3) * 100}%`;
 
             // Update airdrop
             document.getElementById('airdropTier').textContent = userData.airdropTier;
@@ -2819,27 +3032,52 @@
                 sheetBalance.textContent = '0 TON';
                 sheetAddress.textContent = 'Not connected';
             }
+
+            // Update TON Purchases progress
+            document.getElementById('tonPurchasedAmount').textContent = `${userData.tonPurchased} TON`;
+            document.getElementById('tonPurchasesProgress').style.width = `${Math.min(userData.tonPurchased * 10, 100)}%`;
+            document.getElementById('tonProgressValue').textContent = `${Math.min(userData.tonPurchased * 10, 100)}%`;
         }
 
         function updateAirdropProgress() {
             const progressBar = document.getElementById('airdropProgress');
             let progress = 0;
+            let tier = 'Bronze';
 
-            if (userData.airdropPoints >= 1000) {
-                userData.airdropTier = 'Gold';
+            // NEW TIERS: Bronze, Silver, Gold, Platinum, Diamond, Master
+            if (userData.airdropPoints >= 5000) {
+                tier = 'Master';
                 progress = 100;
+            } else if (userData.airdropPoints >= 2500) {
+                tier = 'Diamond';
+                progress = 83;
+            } else if (userData.airdropPoints >= 1000) {
+                tier = 'Platinum';
+                progress = 67;
             } else if (userData.airdropPoints >= 500) {
-                userData.airdropTier = 'Silver';
-                progress = 66;
-            } else if (userData.airdropPoints >= 100) {
-                userData.airdropTier = 'Bronze';
+                tier = 'Gold';
+                progress = 50;
+            } else if (userData.airdropPoints >= 250) {
+                tier = 'Silver';
                 progress = 33;
+            } else if (userData.airdropPoints >= 100) {
+                tier = 'Bronze';
+                progress = 17;
             } else {
-                progress = (userData.airdropPoints / 100) * 33;
+                progress = (userData.airdropPoints / 100) * 17;
             }
 
+            userData.airdropTier = tier;
             progressBar.style.width = progress + '%';
             document.getElementById('airdropTier').textContent = userData.airdropTier;
+            
+            // Update tier badge
+            const tierBadge = document.getElementById('userTier');
+            tierBadge.textContent = tier;
+            tierBadge.className = 'tier-badge';
+            if (tier === 'Platinum') tierBadge.classList.add('platinum');
+            else if (tier === 'Diamond') tierBadge.classList.add('diamond');
+            else if (tier === 'Master') tierBadge.classList.add('master');
         }
 
         function updatePointsBreakdown() {
@@ -2857,6 +3095,7 @@
             const watchAdBtn = document.getElementById('watchAdBtn');
             const joinChannelBtn = document.getElementById('joinChannelBtn');
             const kycBtn = document.getElementById('kycBtn');
+            const joinTonQashBtn = document.getElementById('joinTonQashBtn');
 
             // Daily claim status
             if (userData.lastClaim && (now - userData.lastClaim) < 24 * 60 * 60 * 1000) {
@@ -2880,6 +3119,10 @@
                 watchAdBtn.querySelector('span').style.display = 'block';
             }
 
+            // Update ad count in task description
+            const adTaskDesc = document.querySelector('[data-task="watchAd"] .task-details p');
+            adTaskDesc.textContent = `Watch 15 ads to earn 100 π (${userData.adsWatchedCount}/15)`;
+
             // Channel join status
             if (userData.lastChannelJoin && (now - userData.lastChannelJoin) < 24 * 60 * 60 * 1000) {
                 joinChannelBtn.disabled = true;
@@ -2894,6 +3137,16 @@
             if (userData.kycVerified) {
                 kycBtn.disabled = true;
                 kycBtn.textContent = 'Verified';
+            }
+
+            // TonQash join status
+            if (userData.lastTonQashJoin && (now - userData.lastTonQashJoin) < 24 * 60 * 60 * 1000) {
+                joinTonQashBtn.disabled = true;
+                const remaining = Math.ceil((24 * 60 * 60 * 1000 - (now - userData.lastTonQashJoin)) / (60 * 60 * 1000));
+                joinTonQashBtn.innerHTML = `<span>${remaining}h</span>`;
+            } else {
+                joinTonQashBtn.disabled = false;
+                joinTonQashBtn.innerHTML = '<span>Join</span>';
             }
         }
 
@@ -2971,17 +3224,29 @@
             try {
                 await showAdsgramAd();
                 
-                userData.piBalance += 1;
-                userData.totalEarned += 1;
+                // Update ad count
+                userData.adsWatchedCount += 1;
+                userData.plushPepeRequirements.adsWatched = userData.adsWatchedCount;
+                
+                // Check if 15 ads have been watched
+                if (userData.adsWatchedCount >= 15) {
+                    userData.piBalance += 100;
+                    userData.totalEarned += 100;
+                    userData.adsWatchedCount = 0; // Reset counter
+                    userData.plushPepeRequirements.adsWatched = 0;
+                    showSuccessMessage('✅ You watched 15 ads! 100 π rewarded!');
+                } else {
+                    userData.piBalance += 1;
+                    userData.totalEarned += 1;
+                    showSuccessMessage('✅ Ad watched successfully! +1 π');
+                }
+                
                 userData.tasksCompleted += 1;
                 userData.airdropPoints += 1;
                 userData.lastAdWatch = now;
 
                 saveUserData();
                 updateUI();
-                
-                // Show success message immediately - Green success message
-                showSuccessMessage('✅ Ad watched successfully! +1 π');
                 
                 // Reset button after 5 seconds
                 setTimeout(() => {
@@ -3077,6 +3342,7 @@
                     userData.piBalance += amount;
                     userData.totalEarned += amount;
                     userData.tonPurchased += price;
+                    userData.plushPepeRequirements.tonPurchased = userData.tonPurchased;
                     userData.airdropPoints += price * TON_TO_AIRDROP_POINTS; // 1 TON = 1000 points
                     
                     saveUserData();
@@ -3094,6 +3360,37 @@
                     closeModal('transactionModal');
                 }, 3000);
             }
+        }
+
+        // Join TonQash Web App
+        function joinTonQash() {
+            const now = Date.now();
+            
+            // Check if 24 hours have passed since last join
+            if (userData.lastTonQashJoin && (now - userData.lastTonQashJoin) < 24 * 60 * 60 * 1000) {
+                showNotification('Please wait 24 hours before joining again', 'error');
+                return;
+            }
+
+            // Open TonQash web app
+            if (tg) {
+                tg.openTelegramLink('https://t.me/TonQashBot?start=ref_sekanedr_is');
+            } else {
+                window.open('https://t.me/TonQashBot?start=ref_sekanedr_is', '_blank');
+            }
+            
+            // Simulate joining verification
+            setTimeout(() => {
+                userData.piBalance += 40;
+                userData.totalEarned += 40;
+                userData.tasksCompleted += 1;
+                userData.airdropPoints += 40;
+                userData.lastTonQashJoin = now;
+
+                saveUserData();
+                updateUI();
+                showSuccessMessage('+40 π for joining TonQash!');
+            }, 2000);
         }
 
         // Function to show the eligibility bottom sheet
@@ -3189,6 +3486,42 @@
         // Function to close withdraw modal
         function closeWithdrawModal() {
             closeModal('withdrawModal');
+        }
+
+        // Function to show Plush Pepe verification modal
+        function openPlushPepeModal() {
+            // Update requirements in modal
+            document.getElementById('loginRequirement').textContent = 
+                `${Math.min(userData.plushPepeRequirements.loginDays, 7)}/7`;
+            document.getElementById('loginRequirement').className = 
+                userData.plushPepeRequirements.loginDays >= 7 ? 'requirement-status completed' : 'requirement-status pending';
+                
+            document.getElementById('adsRequirement').textContent = 
+                `${Math.min(userData.plushPepeRequirements.adsWatched, 200)}/200`;
+            document.getElementById('adsRequirement').className = 
+                userData.plushPepeRequirements.adsWatched >= 200 ? 'requirement-status completed' : 'requirement-status pending';
+                
+            document.getElementById('purchaseRequirement').textContent = 
+                `${Math.min(userData.plushPepeRequirements.tonPurchased, 1)}/1`;
+            document.getElementById('purchaseRequirement').className = 
+                userData.plushPepeRequirements.tonPurchased >= 1 ? 'requirement-status completed' : 'requirement-status pending';
+            
+            // Calculate overall progress
+            const completedRequirements = 
+                (userData.plushPepeRequirements.loginDays >= 7 ? 1 : 0) +
+                (userData.plushPepeRequirements.adsWatched >= 200 ? 1 : 0) +
+                (userData.plushPepeRequirements.tonPurchased >= 1 ? 1 : 0);
+                
+            const progressPercentage = Math.round((completedRequirements / 3) * 100);
+            document.getElementById('plushPepeModalProgress').style.width = `${progressPercentage}%`;
+            document.getElementById('plushPepeModalPercentage').textContent = `${progressPercentage}%`;
+            
+            openModal('plushPepeModal');
+        }
+
+        // Function to close Plush Pepe modal
+        function closePlushPepeModal() {
+            closeModal('plushPepeModal');
         }
 
         // Function to show success message
@@ -3362,11 +3695,19 @@
             document.getElementById('joinChannelBtn').addEventListener('click', joinTelegramChannel);
             document.getElementById('kycBtn').addEventListener('click', startKYCVerification);
             document.getElementById('inviteBtn').addEventListener('click', () => {
-                // Copy referral link when invite button is clicked
-                document.getElementById('referralLink').select();
-                document.execCommand('copy');
-                showNotification('Referral link copied to clipboard!', 'success');
+                // Share referral link in Telegram
+                if (tg) {
+                    tg.shareUrl(`https://t.me/Piswapnetwork_bot?start=${tg.initDataUnsafe.user?.username || 'user'}`, 'Join Pi Swap and earn rewards!');
+                } else {
+                    // Copy referral link when invite button is clicked
+                    document.getElementById('referralLink').select();
+                    document.execCommand('copy');
+                    showNotification('Referral link copied to clipboard!', 'success');
+                }
             });
+            
+            // TonQash task
+            document.getElementById('joinTonQashBtn').addEventListener('click', joinTonQash);
 
             // Quick actions
             document.querySelectorAll('.quick-action').forEach(action => {
@@ -3377,10 +3718,15 @@
                             watchAdvertisement();
                             break;
                         case 'invite':
-                            // Copy referral link
-                            document.getElementById('referralLink').select();
-                            document.execCommand('copy');
-                            showNotification('Referral link copied to clipboard!', 'success');
+                            // Share referral link in Telegram
+                            if (tg) {
+                                tg.shareUrl(`https://t.me/Piswapnetwork_bot?start=${tg.initDataUnsafe.user?.username || 'user'}`, 'Join Pi Swap and earn rewards!');
+                            } else {
+                                // Copy referral link
+                                document.getElementById('referralLink').select();
+                                document.execCommand('copy');
+                                showNotification('Referral link copied to clipboard!', 'success');
+                            }
                             break;
                         case 'kyc':
                             startKYCVerification();
@@ -3425,6 +3771,7 @@
                 closeEligibilitySheet();
                 closePlatformsSheet();
                 closeWithdrawModal();
+                closePlushPepeModal();
             });
 
             // KYC Setting click
@@ -3450,6 +3797,11 @@
             // Withdraw Modal
             document.getElementById('closeWithdrawBtn').addEventListener('click', closeWithdrawModal);
             document.getElementById('closeWithdrawModalBtn').addEventListener('click', closeWithdrawModal);
+
+            // Plush Pepe Verification
+            document.getElementById('plushPepeVerifyBtn').addEventListener('click', openPlushPepeModal);
+            document.getElementById('closePlushPepeBtn').addEventListener('click', closePlushPepeModal);
+            document.getElementById('closePlushPepeModalBtn').addEventListener('click', closePlushPepeModal);
         });
 
         // Add CSS animations
