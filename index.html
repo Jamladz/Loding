@@ -31,9 +31,18 @@
             --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             --gradient-secondary: linear-gradient(135deg, var(--secondary-color), #FF6B00);
             --gradient-success: linear-gradient(135deg, var(--success-color), #20B24D);
+            
+            /* Professional Tier Colors */
+            --bronze-color: #CD7F32;
+            --silver-color: #C0C0C0;
+            --gold-color: #FFD700;
             --platinum-color: #E5E4E2;
             --diamond-color: #B9F2FF;
-            --master-color: #FFD700;
+            --master-color: #FF6B35;
+            --elite-color: #8A2BE2;
+            --legendary-color: #FF4500;
+            --mythic-color: #00CED1;
+            --immortal-color: #DC143C;
         }
 
         * {
@@ -619,28 +628,75 @@
             margin-bottom: 8px;
         }
 
+        /* Professional Tier Badges */
         .tier-badge {
-            background: var(--gradient-primary);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 12px;
+            padding: 6px 16px;
+            border-radius: 20px;
             font-size: 0.8rem;
-            font-weight: 600;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .tier-badge.bronze {
+            background: linear-gradient(135deg, var(--bronze-color), #8B4513);
+            color: #FFF;
+            border: 1px solid #CD7F32;
+        }
+
+        .tier-badge.silver {
+            background: linear-gradient(135deg, var(--silver-color), #A8A8A8);
+            color: #333;
+            border: 1px solid #C0C0C0;
+        }
+
+        .tier-badge.gold {
+            background: linear-gradient(135deg, var(--gold-color), #FFA500);
+            color: #333;
+            border: 1px solid #FFD700;
         }
 
         .tier-badge.platinum {
             background: linear-gradient(135deg, var(--platinum-color), #C0C0C0);
             color: #333;
+            border: 1px solid #E5E4E2;
         }
 
         .tier-badge.diamond {
             background: linear-gradient(135deg, var(--diamond-color), #89CFF0);
             color: #333;
+            border: 1px solid #B9F2FF;
         }
 
         .tier-badge.master {
-            background: linear-gradient(135deg, var(--master-color), #FFA500);
-            color: #333;
+            background: linear-gradient(135deg, var(--master-color), #FF4500);
+            color: white;
+            border: 1px solid #FF6B35;
+        }
+
+        .tier-badge.elite {
+            background: linear-gradient(135deg, var(--elite-color), #4B0082);
+            color: white;
+            border: 1px solid #8A2BE2;
+        }
+
+        .tier-badge.legendary {
+            background: linear-gradient(135deg, var(--legendary-color), #B22222);
+            color: white;
+            border: 1px solid #FF4500;
+        }
+
+        .tier-badge.mythic {
+            background: linear-gradient(135deg, var(--mythic-color), #008B8B);
+            color: white;
+            border: 1px solid #00CED1;
+        }
+
+        .tier-badge.immortal {
+            background: linear-gradient(135deg, var(--immortal-color), #8B0000);
+            color: white;
+            border: 1px solid #DC143C;
         }
 
         .profile-stats {
@@ -1656,6 +1712,21 @@
             margin-top: 8px;
         }
 
+        /* TON Purchases Progress Bar */
+        .ton-purchases-progress {
+            background: var(--surface);
+            padding: 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }
+
+        .ton-progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
         /* Responsive */
         @media (max-width: 480px) {
             .screen {
@@ -1824,8 +1895,8 @@
                     <div class="task-icon">📺</div>
                     <div class="task-details">
                         <h4>Watch Adsgram Ad</h4>
-                        <p>Watch 15 ads to earn 100 π</p>
-                        <div class="task-reward">+100 π (15/15)</div>
+                        <p>Watch ads to earn Pi</p>
+                        <div class="task-reward">+1 π per ad</div>
                     </div>
                 </div>
                 <div class="task-status">
@@ -1833,6 +1904,21 @@
                         <span>Watch Ad</span>
                         <div class="cooldown-timer" style="display:none">20s</div>
                     </button>
+                </div>
+            </div>
+
+            <!-- New Task: Watch 200 Ads -->
+            <div class="task-item" data-task="watch200Ads">
+                <div class="task-info">
+                    <div class="task-icon">🎬</div>
+                    <div class="task-details">
+                        <h4>Watch 200 Ads</h4>
+                        <p>Complete 200 ad watches for bonus reward</p>
+                        <div class="task-reward">+500 π (<span id="adsWatchedCount">0</span>/200)</div>
+                    </div>
+                </div>
+                <div class="task-status">
+                    <span class="status-badge pending" id="watch200AdsStatus">In Progress</span>
                 </div>
             </div>
 
@@ -1847,6 +1933,23 @@
                 </div>
                 <div class="task-status">
                     <button class="task-action-btn" id="joinChannelBtn">
+                        <span>Join Channel</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- New Task: Join Pi Swap Channel -->
+            <div class="task-item" data-task="joinPiSwapChannel">
+                <div class="task-info">
+                    <div class="task-icon">🔗</div>
+                    <div class="task-details">
+                        <h4>Join Pi Swap Channel</h4>
+                        <p>Join Pi Swap community channel</p>
+                        <div class="task-reward">+30 π</div>
+                    </div>
+                </div>
+                <div class="task-status">
+                    <button class="task-action-btn" id="joinPiSwapChannelBtn">
                         <span>Join Channel</span>
                     </button>
                 </div>
@@ -1988,7 +2091,7 @@
                 <h2 id="profileName">User Name</h2>
                 <p id="profileUsername">@username</p>
                 <div class="user-tier">
-                    <span class="tier-badge" id="userTier">Member</span>
+                    <span class="tier-badge bronze" id="userTier">Bronze</span>
                 </div>
             </div>
         </div>
@@ -2053,6 +2156,10 @@
             </div>
             <div class="progress-bar">
                 <div class="progress-fill" id="tonPurchasesProgress" style="width: 0%"></div>
+            </div>
+            <div class="progress-label" style="margin-top: 8px;">
+                <span>Progress: <span id="tonPurchasedAmount">0</span>/10 TON</span>
+                <span>10% per TON</span>
             </div>
         </div>
 
@@ -2229,7 +2336,7 @@
                 <span>TON Purchases Progress</span>
             </div>
             <div class="ton-purchase-rate">
-                <span id="tonPurchasedAmount">0 TON</span>
+                <span id="tonPurchasedSheetAmount">0 TON</span>
             </div>
         </div>
         
@@ -2541,14 +2648,47 @@
                 loginDays: 0,
                 adsWatched: 0,
                 tonPurchased: 0
-            }
+            },
+            // New properties for 200 ads task
+            adsWatched200Count: 0,
+            task200AdsCompleted: false,
+            // New property for Pi Swap channel
+            joinedPiSwapChannel: false,
+            lastPiSwapChannelJoin: null
         };
 
         // Game Configuration
-        const GAME_POINTS_PER_PI = 5; // Now 5 Pi per game round
-        const TON_TO_AIRDROP_POINTS = 1000; // 1 TON = 1000 airdrop points
+        const GAME_POINTS_PER_PI = 5;
+        const TON_TO_AIRDROP_POINTS = 1000;
         const PLUSH_PEPE_DISTRIBUTION_END_DATE = new Date();
-        PLUSH_PEPE_DISTRIBUTION_END_DATE.setMonth(PLUSH_PEPE_DISTRIBUTION_END_DATE.getMonth() + 5); // 5 months from now
+        PLUSH_PEPE_DISTRIBUTION_END_DATE.setMonth(PLUSH_PEPE_DISTRIBUTION_END_DATE.getMonth() + 5);
+
+        // Professional Tiers Configuration
+        const TIER_THRESHOLDS = {
+            Bronze: 0,
+            Silver: 100,
+            Gold: 500,
+            Platinum: 1000,
+            Diamond: 2500,
+            Master: 5000,
+            Elite: 10000,
+            Legendary: 25000,
+            Mythic: 50000,
+            Immortal: 100000
+        };
+
+        const TIER_COLORS = {
+            Bronze: 'bronze',
+            Silver: 'silver',
+            Gold: 'gold',
+            Platinum: 'platinum',
+            Diamond: 'diamond',
+            Master: 'master',
+            Elite: 'elite',
+            Legendary: 'legendary',
+            Mythic: 'mythic',
+            Immortal: 'immortal'
+        };
 
         // Game variables
         let scoreInterval = null;
@@ -2563,7 +2703,6 @@
         // Initialize TON Connect
         function initTONConnect() {
             try {
-                // Create TON Connect UI with proper configuration
                 tonConnectUI = new TON_CONNECT_UI.TonConnectUI({
                     manifestUrl: 'https://jamladz.github.io/Loding/tonconnect-manifest.json',
                     buttonRootId: 'ton-connect-button',
@@ -2572,15 +2711,12 @@
                     }
                 });
 
-                // Set up event listeners for wallet connection
                 tonConnectUI.onStatusChange(async (wallet) => {
                     if (wallet) {
-                        // Wallet connected successfully
                         userData.walletConnected = true;
                         userData.walletAddress = wallet.account.address;
                         
                         try {
-                            // Get wallet balance
                             const balance = await getWalletBalance(wallet.account.address);
                             userData.tonBalance = balance;
                         } catch (error) {
@@ -2588,7 +2724,6 @@
                             userData.tonBalance = 0;
                         }
                         
-                        // Give wallet connection bonus if first time
                         if (!localStorage.getItem('wallet_bonus_given')) {
                             userData.piBalance += 10;
                             userData.totalEarned += 10;
@@ -2600,7 +2735,6 @@
                         updateUI();
                         showNotification('TON wallet connected successfully!', 'success');
                     } else {
-                        // Wallet disconnected
                         userData.walletConnected = false;
                         userData.walletAddress = null;
                         userData.tonBalance = 0;
@@ -2610,7 +2744,6 @@
                     }
                 });
 
-                // Check if wallet is already connected
                 if (tonConnectUI.connected) {
                     const wallet = tonConnectUI.wallet;
                     if (wallet) {
@@ -2624,7 +2757,6 @@
                 console.error('TON Connect initialization failed:', error);
                 showNotification('Failed to initialize wallet connection. Please try again.', 'error');
                 
-                // Fallback: Show manual connect button
                 document.getElementById('ton-connect-button').innerHTML = `
                     <button class="action-btn primary" id="manualConnectBtn" style="width: 100%;">
                         <img src="https://img.icons8.com/ios/50/blockchain-technology.png" class="btn-icon">
@@ -2641,16 +2773,14 @@
         // Get wallet balance from TON API
         async function getWalletBalance(address) {
             try {
-                // Using TON API to get balance
                 const response = await fetch(`https://tonapi.io/v2/accounts/${address}`);
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
                 const data = await response.json();
-                return (data.balance / 1000000000).toFixed(2); // Convert from nanotons to TON
+                return (data.balance / 1000000000).toFixed(2);
             } catch (error) {
                 console.error('Error fetching wallet balance:', error);
-                // Return a mock balance for demo purposes
                 return (Math.random() * 10).toFixed(2);
             }
         }
@@ -2663,18 +2793,17 @@
 
             try {
                 const transaction = {
-                    validUntil: Math.floor(Date.now() / 1000) + 600, // 10 minutes
+                    validUntil: Math.floor(Date.now() / 1000) + 600,
                     messages: [
                         {
                             address: toAddress,
-                            amount: (amount * 1000000000).toString() // Convert TON to nanotons
+                            amount: (amount * 1000000000).toString()
                         }
                     ]
                 };
 
                 const result = await tonConnectUI.sendTransaction(transaction);
                 
-                // Wait for transaction confirmation
                 const txHash = await waitForTransactionConfirmation(result.boc);
                 return {
                     hash: txHash,
@@ -2689,8 +2818,6 @@
         // Wait for transaction confirmation
         async function waitForTransactionConfirmation(boc) {
             return new Promise((resolve) => {
-                // In a real implementation, you would poll the blockchain
-                // For demo purposes, we'll simulate waiting
                 setTimeout(() => {
                     resolve('tx_' + Math.random().toString(36).substr(2, 9));
                 }, 3000);
@@ -2701,25 +2828,22 @@
         function showAdsgramAd() {
             return new Promise((resolve, reject) => {
                 try {
-                    // Show ad screen
                     const adScreen = document.getElementById('adScreen');
                     const adFrame = document.getElementById('adFrame');
                     
-                    // Use Adsgram SDK to show ad
                     if (window.Adsgram && window.Adsgram.init) {
                         window.Adsgram.init({ blockId: "int-16479" }).show()
                             .then(() => {
-                                // Ad completed successfully
                                 closeAdScreen();
                                 resolve(true);
                             })
                             .catch(error => {
                                 console.error('Adsgram ad error:', error);
                                 closeAdScreen();
-                                reject(new Error('Ad failed to load'));
+                                // REMOVED: No longer show "Ad failed" message
+                                reject(new Error('Ad loading issue'));
                             });
                     } else {
-                        // Fallback to demo ad if Adsgram not available
                         showDemoAd()
                             .then(() => {
                                 resolve(true);
@@ -2742,11 +2866,9 @@
                 const adScreen = document.getElementById('adScreen');
                 const adFrame = document.getElementById('adFrame');
                 
-                // Use a demo ad URL
                 adFrame.src = 'https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1';
                 adScreen.style.display = 'block';
                 
-                // Simulate ad completion after 10 seconds
                 setTimeout(() => {
                     closeAdScreen();
                     resolve(true);
@@ -2778,30 +2900,25 @@
             userData.gameScore = 0;
             updateGameScore();
             
-            // Load the game iframe
             gameIframe = document.getElementById('gameIframe');
             gameIframe.src = 'https://freeonlinegames.github.io/subway-surfers-tokyo/';
             
-            // Simulate score updates for demo purposes
             startScoreSimulation();
         }
 
         function closeGameScreen() {
             document.getElementById('gameScreen').style.display = 'none';
             
-            // Stop the game simulation
             if (scoreInterval) {
                 clearInterval(scoreInterval);
                 scoreInterval = null;
             }
             
-            // Stop the game iframe
             if (gameIframe) {
                 gameIframe.src = 'about:blank';
                 gameIframe = null;
             }
             
-            // NEW LOGIC: Each game round earns 5 π
             const earnedPi = GAME_POINTS_PER_PI;
             
             if (earnedPi > 0) {
@@ -2817,7 +2934,6 @@
                 showNotification('Game completed! Try again to earn more points.', 'info');
             }
             
-            // Reset game state
             userData.gameScore = 0;
             userData.gameAdWatched = false;
         }
@@ -2827,8 +2943,6 @@
         }
 
         function startScoreSimulation() {
-            // For demo purposes, simulate score increasing
-            // In a real implementation, this would come from the game iframe
             scoreInterval = setInterval(() => {
                 if (document.getElementById('gameScreen').style.display === 'block') {
                     userData.gameScore += Math.floor(Math.random() * 100) + 50;
@@ -2843,16 +2957,15 @@
             try {
                 await showAdsgramAd();
                 
-                // After ad completion, enable game
                 userData.gameAdWatched = true;
                 saveUserData();
                 
-                // Open game after ad
                 setTimeout(() => {
                     openGameScreen();
                 }, 1000);
             } catch (error) {
-                showNotification('Ad failed, please try again', 'error');
+                // REMOVED: No longer show "Ad failed" message
+                // User won't see any message when ad fails
             }
         }
 
@@ -2875,32 +2988,79 @@
                 `${days}d ${hours.toString().padStart(2, '0')}h ${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
         }
 
+        // Professional Tier Functions
+        function getCurrentTier(points) {
+            const tiers = Object.keys(TIER_THRESHOLDS);
+            let currentTier = 'Bronze';
+            
+            for (let i = tiers.length - 1; i >= 0; i--) {
+                if (points >= TIER_THRESHOLDS[tiers[i]]) {
+                    currentTier = tiers[i];
+                    break;
+                }
+            }
+            
+            return currentTier;
+        }
+
+        function getNextTier(currentTier) {
+            const tiers = Object.keys(TIER_THRESHOLDS);
+            const currentIndex = tiers.indexOf(currentTier);
+            
+            if (currentIndex < tiers.length - 1) {
+                return tiers[currentIndex + 1];
+            }
+            return currentTier;
+        }
+
+        function calculateTierProgress(points, currentTier) {
+            const nextTier = getNextTier(currentTier);
+            
+            if (currentTier === 'Immortal') {
+                return 100;
+            }
+            
+            const currentThreshold = TIER_THRESHOLDS[currentTier];
+            const nextThreshold = TIER_THRESHOLDS[nextTier];
+            const progress = ((points - currentThreshold) / (nextThreshold - currentThreshold)) * 100;
+            
+            return Math.min(Math.max(progress, 0), 100);
+        }
+
+        function updateTierVisualization() {
+            const currentTier = getCurrentTier(userData.airdropPoints);
+            const progress = calculateTierProgress(userData.airdropPoints, currentTier);
+            const nextTier = getNextTier(currentTier);
+            
+            // Update tier badge
+            const tierBadge = document.getElementById('userTier');
+            tierBadge.textContent = currentTier;
+            tierBadge.className = `tier-badge ${TIER_COLORS[currentTier]}`;
+        }
+
         // Load user data from localStorage
         function loadUserData() {
             const saved = localStorage.getItem('pi_swap_user_data');
             if (saved) {
                 const savedData = JSON.parse(saved);
                 
-                // Convert date strings back to Date objects
                 if (savedData.lastClaim) savedData.lastClaim = new Date(savedData.lastClaim);
                 if (savedData.lastAdWatch) savedData.lastAdWatch = new Date(savedData.lastAdWatch);
                 if (savedData.lastChannelJoin) savedData.lastChannelJoin = new Date(savedData.lastChannelJoin);
                 if (savedData.lastTonQashJoin) savedData.lastTonQashJoin = new Date(savedData.lastTonQashJoin);
                 if (savedData.lastLoginDate) savedData.lastLoginDate = new Date(savedData.lastLoginDate);
+                if (savedData.lastPiSwapChannelJoin) savedData.lastPiSwapChannelJoin = new Date(savedData.lastPiSwapChannelJoin);
                 
                 userData = { ...userData, ...savedData };
             }
             
-            // Check if this is first login
             const firstLogin = localStorage.getItem('pi_swap_first_login');
             if (!firstLogin) {
                 userData.firstLoginBonusGiven = false;
                 localStorage.setItem('pi_swap_first_login', 'true');
             }
             
-            // Check consecutive login days
             checkConsecutiveLogin();
-            
             updateUI();
         }
 
@@ -2910,7 +3070,6 @@
             today.setHours(0, 0, 0, 0);
             
             if (!userData.lastLoginDate) {
-                // First login
                 userData.lastLoginDate = today;
                 userData.consecutiveLoginDays = 1;
             } else {
@@ -2921,18 +3080,14 @@
                 const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
                 
                 if (diffDays === 1) {
-                    // Consecutive login
                     userData.consecutiveLoginDays += 1;
                     userData.lastLoginDate = today;
                 } else if (diffDays > 1) {
-                    // Break in login streak
                     userData.consecutiveLoginDays = 1;
                     userData.lastLoginDate = today;
                 }
-                // If diffDays is 0, same day login, do nothing
             }
             
-            // Update Plush Pepe requirements
             userData.plushPepeRequirements.loginDays = userData.consecutiveLoginDays;
             userData.plushPepeRequirements.adsWatched = userData.adsWatchedCount;
             userData.plushPepeRequirements.tonPurchased = userData.tonPurchased;
@@ -2959,8 +3114,18 @@
             document.getElementById('profileTotalEarned').textContent = userData.totalEarned + ' π';
             document.getElementById('profileTasksDone').textContent = userData.tasksCompleted;
 
-            // Update referral stats (hidden counts)
-            // We're hiding the zeros as requested
+            // Update 200 ads task
+            document.getElementById('adsWatchedCount').textContent = userData.adsWatched200Count;
+            const watch200AdsStatus = document.getElementById('watch200AdsStatus');
+            if (userData.task200AdsCompleted) {
+                watch200AdsStatus.textContent = 'Completed';
+                watch200AdsStatus.className = 'status-badge completed';
+            } else {
+                watch200AdsStatus.textContent = 'In Progress';
+                watch200AdsStatus.className = 'status-badge pending';
+            }
+
+            // Update referral stats
             if (userData.referralCount > 0) {
                 document.getElementById('referralCount').textContent = userData.referralCount;
                 document.getElementById('referralCount').style.display = 'block';
@@ -2990,6 +3155,9 @@
             document.getElementById('airdropTier').textContent = userData.airdropTier;
             updateAirdropProgress();
             updatePointsBreakdown();
+
+            // Update professional tiers
+            updateTierVisualization();
 
             // Update task statuses
             updateTaskStatuses();
@@ -3034,9 +3202,11 @@
             }
 
             // Update TON Purchases progress
-            document.getElementById('tonPurchasedAmount').textContent = `${userData.tonPurchased} TON`;
-            document.getElementById('tonPurchasesProgress').style.width = `${Math.min(userData.tonPurchased * 10, 100)}%`;
-            document.getElementById('tonProgressValue').textContent = `${Math.min(userData.tonPurchased * 10, 100)}%`;
+            document.getElementById('tonPurchasedAmount').textContent = userData.tonPurchased;
+            document.getElementById('tonPurchasedSheetAmount').textContent = `${userData.tonPurchased} TON`;
+            const tonProgress = Math.min(userData.tonPurchased * 10, 100);
+            document.getElementById('tonPurchasesProgress').style.width = `${tonProgress}%`;
+            document.getElementById('tonProgressValue').textContent = `${tonProgress}%`;
         }
 
         function updateAirdropProgress() {
@@ -3044,7 +3214,6 @@
             let progress = 0;
             let tier = 'Bronze';
 
-            // NEW TIERS: Bronze, Silver, Gold, Platinum, Diamond, Master
             if (userData.airdropPoints >= 5000) {
                 tier = 'Master';
                 progress = 100;
@@ -3070,14 +3239,6 @@
             userData.airdropTier = tier;
             progressBar.style.width = progress + '%';
             document.getElementById('airdropTier').textContent = userData.airdropTier;
-            
-            // Update tier badge
-            const tierBadge = document.getElementById('userTier');
-            tierBadge.textContent = tier;
-            tierBadge.className = 'tier-badge';
-            if (tier === 'Platinum') tierBadge.classList.add('platinum');
-            else if (tier === 'Diamond') tierBadge.classList.add('diamond');
-            else if (tier === 'Master') tierBadge.classList.add('master');
         }
 
         function updatePointsBreakdown() {
@@ -3094,6 +3255,7 @@
             const dailyClaimStatus = document.getElementById('dailyClaimStatus');
             const watchAdBtn = document.getElementById('watchAdBtn');
             const joinChannelBtn = document.getElementById('joinChannelBtn');
+            const joinPiSwapChannelBtn = document.getElementById('joinPiSwapChannelBtn');
             const kycBtn = document.getElementById('kycBtn');
             const joinTonQashBtn = document.getElementById('joinTonQashBtn');
 
@@ -3119,10 +3281,6 @@
                 watchAdBtn.querySelector('span').style.display = 'block';
             }
 
-            // Update ad count in task description
-            const adTaskDesc = document.querySelector('[data-task="watchAd"] .task-details p');
-            adTaskDesc.textContent = `Watch 15 ads to earn 100 π (${userData.adsWatchedCount}/15)`;
-
             // Channel join status
             if (userData.lastChannelJoin && (now - userData.lastChannelJoin) < 24 * 60 * 60 * 1000) {
                 joinChannelBtn.disabled = true;
@@ -3131,6 +3289,16 @@
             } else {
                 joinChannelBtn.disabled = false;
                 joinChannelBtn.innerHTML = '<span>Join Channel</span>';
+            }
+
+            // Pi Swap Channel join status
+            if (userData.lastPiSwapChannelJoin && (now - userData.lastPiSwapChannelJoin) < 24 * 60 * 60 * 1000) {
+                joinPiSwapChannelBtn.disabled = true;
+                const remaining = Math.ceil((24 * 60 * 60 * 1000 - (now - userData.lastPiSwapChannelJoin)) / (60 * 60 * 1000));
+                joinPiSwapChannelBtn.innerHTML = `<span>${remaining}h</span>`;
+            } else {
+                joinPiSwapChannelBtn.disabled = false;
+                joinPiSwapChannelBtn.innerHTML = '<span>Join Channel</span>';
             }
 
             // KYC status
@@ -3178,7 +3346,6 @@
                 return;
             }
 
-            // Show Adsgram ad before claiming
             const dailyClaimBtn = document.getElementById('dailyClaimBtn');
             const originalText = dailyClaimBtn.innerHTML;
             
@@ -3188,7 +3355,6 @@
             try {
                 await showAdsgramAd();
 
-                // After ad completion, give reward
                 userData.piBalance += 10;
                 userData.totalEarned += 10;
                 userData.tasksCompleted += 1;
@@ -3199,7 +3365,7 @@
                 updateUI();
                 showSuccessMessage('✅ Successfully claimed 10 π!');
             } catch (error) {
-                showNotification('Ad failed, please try again', 'error');
+                // REMOVED: No longer show "Ad failed" message
             } finally {
                 dailyClaimBtn.disabled = false;
                 dailyClaimBtn.innerHTML = originalText;
@@ -3209,7 +3375,6 @@
         async function watchAdvertisement() {
             const now = Date.now();
             
-            // Changed to 20 seconds cooldown
             if (userData.lastAdWatch && (now - userData.lastAdWatch) < 20 * 1000) {
                 showNotification('Please wait 20 seconds before watching another ad', 'error');
                 return;
@@ -3224,17 +3389,17 @@
             try {
                 await showAdsgramAd();
                 
-                // Update ad count
+                // Update ad counts
                 userData.adsWatchedCount += 1;
+                userData.adsWatched200Count += 1;
                 userData.plushPepeRequirements.adsWatched = userData.adsWatchedCount;
                 
-                // Check if 15 ads have been watched
-                if (userData.adsWatchedCount >= 15) {
-                    userData.piBalance += 100;
-                    userData.totalEarned += 100;
-                    userData.adsWatchedCount = 0; // Reset counter
-                    userData.plushPepeRequirements.adsWatched = 0;
-                    showSuccessMessage('✅ You watched 15 ads! 100 π rewarded!');
+                // Check if 200 ads have been watched for the special task
+                if (userData.adsWatched200Count >= 200 && !userData.task200AdsCompleted) {
+                    userData.piBalance += 500;
+                    userData.totalEarned += 500;
+                    userData.task200AdsCompleted = true;
+                    showSuccessMessage('✅ You watched 200 ads! 500 π rewarded!');
                 } else {
                     userData.piBalance += 1;
                     userData.totalEarned += 1;
@@ -3248,13 +3413,12 @@
                 saveUserData();
                 updateUI();
                 
-                // Reset button after 5 seconds
                 setTimeout(() => {
                     watchAdBtn.disabled = false;
                     watchAdBtn.innerHTML = originalText;
                 }, 5000);
             } catch (error) {
-                showNotification('Ad failed, please try again', 'error');
+                // REMOVED: No longer show "Ad failed" message
                 watchAdBtn.disabled = false;
                 watchAdBtn.innerHTML = originalText;
             }
@@ -3263,20 +3427,17 @@
         function joinTelegramChannel() {
             const now = Date.now();
             
-            // Check if 24 hours have passed since last join
             if (userData.lastChannelJoin && (now - userData.lastChannelJoin) < 24 * 60 * 60 * 1000) {
                 showNotification('Please wait 24 hours before joining again', 'error');
                 return;
             }
 
-            // Updated channel link to PiAnnouncements
             if (tg) {
                 tg.openTelegramLink('https://t.me/PiAnnouncements');
             } else {
                 window.open('https://t.me/PiAnnouncements', '_blank');
             }
             
-            // Simulate channel join verification
             setTimeout(() => {
                 userData.piBalance += 50;
                 userData.totalEarned += 50;
@@ -3288,6 +3449,35 @@
                 saveUserData();
                 updateUI();
                 showSuccessMessage('+50 π for joining our channel!');
+            }, 2000);
+        }
+
+        // New function: Join Pi Swap Channel
+        function joinPiSwapChannel() {
+            const now = Date.now();
+            
+            if (userData.lastPiSwapChannelJoin && (now - userData.lastPiSwapChannelJoin) < 24 * 60 * 60 * 1000) {
+                showNotification('Please wait 24 hours before joining again', 'error');
+                return;
+            }
+
+            if (tg) {
+                tg.openTelegramLink('https://t.me/communitypiswap');
+            } else {
+                window.open('https://t.me/communitypiswap', '_blank');
+            }
+            
+            setTimeout(() => {
+                userData.piBalance += 30;
+                userData.totalEarned += 30;
+                userData.tasksCompleted += 1;
+                userData.airdropPoints += 50;
+                userData.joinedPiSwapChannel = true;
+                userData.lastPiSwapChannelJoin = now;
+
+                saveUserData();
+                updateUI();
+                showSuccessMessage('+30 π for joining Pi Swap channel!');
             }, 2000);
         }
 
@@ -3319,7 +3509,6 @@
                 return;
             }
 
-            // Show transaction modal
             const modal = document.getElementById('transactionModal');
             const tonAmount = document.getElementById('transactionTonAmount');
             const piAmount = document.getElementById('transactionPiAmount');
@@ -3338,12 +3527,11 @@
                 if (transaction.success) {
                     status.textContent = 'Transaction completed successfully!';
                     
-                    // Add Pi Swap tokens to user balance
                     userData.piBalance += amount;
                     userData.totalEarned += amount;
                     userData.tonPurchased += price;
                     userData.plushPepeRequirements.tonPurchased = userData.tonPurchased;
-                    userData.airdropPoints += price * TON_TO_AIRDROP_POINTS; // 1 TON = 1000 points
+                    userData.airdropPoints += price * TON_TO_AIRDROP_POINTS;
                     
                     saveUserData();
                     updateUI();
@@ -3366,20 +3554,17 @@
         function joinTonQash() {
             const now = Date.now();
             
-            // Check if 24 hours have passed since last join
             if (userData.lastTonQashJoin && (now - userData.lastTonQashJoin) < 24 * 60 * 60 * 1000) {
                 showNotification('Please wait 24 hours before joining again', 'error');
                 return;
             }
 
-            // Open TonQash web app
             if (tg) {
                 tg.openTelegramLink('https://t.me/TonQashBot?start=ref_sekanedr_is');
             } else {
                 window.open('https://t.me/TonQashBot?start=ref_sekanedr_is', '_blank');
             }
             
-            // Simulate joining verification
             setTimeout(() => {
                 userData.piBalance += 40;
                 userData.totalEarned += 40;
@@ -3398,7 +3583,6 @@
             document.getElementById('eligibilitySheet').classList.add('active');
             document.getElementById('overlay').classList.add('active');
             
-            // Update the progress bars
             updateEligibilityProgress();
         }
 
@@ -3410,7 +3594,6 @@
 
         // Function to update eligibility progress bars
         function updateEligibilityProgress() {
-            // Daily Claims progress (based on last claim time)
             const now = Date.now();
             const lastClaim = userData.lastClaim || 0;
             const timeSinceLastClaim = now - lastClaim;
@@ -3419,17 +3602,14 @@
             document.getElementById('dailyClaimsProgress').style.width = dailyClaimProgress + '%';
             document.getElementById('dailyClaimsValue').textContent = Math.round(dailyClaimProgress) + '%';
             
-            // Tasks Completed progress
             const tasksProgress = Math.min((userData.tasksCompleted / 10) * 100, 100);
             document.getElementById('tasksCompletedProgress').style.width = tasksProgress + '%';
             document.getElementById('tasksCompletedValue').textContent = Math.round(tasksProgress) + '%';
             
-            // KYC Verified progress
             const kycProgress = userData.kycVerified ? 100 : 0;
             document.getElementById('kycVerifiedProgress').style.width = kycProgress + '%';
             document.getElementById('kycVerifiedValue').textContent = kycProgress + '%';
             
-            // Channel Member progress
             const channelProgress = userData.joinedChannel ? 100 : 0;
             document.getElementById('channelMemberProgress').style.width = channelProgress + '%';
             document.getElementById('channelMemberValue').textContent = channelProgress + '%';
@@ -3453,7 +3633,6 @@
             const logo = document.getElementById('withdrawPlatformLogo');
             const amount = document.getElementById('withdrawPiAmount');
             
-            // Set platform-specific content
             let platformName = '';
             let platformLogo = '';
             
@@ -3490,7 +3669,6 @@
 
         // Function to show Plush Pepe verification modal
         function openPlushPepeModal() {
-            // Update requirements in modal
             document.getElementById('loginRequirement').textContent = 
                 `${Math.min(userData.plushPepeRequirements.loginDays, 7)}/7`;
             document.getElementById('loginRequirement').className = 
@@ -3506,7 +3684,6 @@
             document.getElementById('purchaseRequirement').className = 
                 userData.plushPepeRequirements.tonPurchased >= 1 ? 'requirement-status completed' : 'requirement-status pending';
             
-            // Calculate overall progress
             const completedRequirements = 
                 (userData.plushPepeRequirements.loginDays >= 7 ? 1 : 0) +
                 (userData.plushPepeRequirements.adsWatched >= 200 ? 1 : 0) +
@@ -3545,7 +3722,6 @@
         }
 
         function showNotification(message, type = 'info') {
-            // Create notification element
             const notification = document.createElement('div');
             notification.className = `notification ${type}`;
             notification.style.cssText = `
@@ -3634,7 +3810,6 @@
                 }
             }
             
-            // Give first login bonus if not given yet
             if (!userData.firstLoginBonusGiven) {
                 userData.piBalance += 50;
                 userData.totalEarned += 50;
@@ -3657,11 +3832,9 @@
                 item.addEventListener('click', function() {
                     const page = this.getAttribute('data-page');
                     
-                    // Update active nav item
                     document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
                     this.classList.add('active');
                     
-                    // Show corresponding screen
                     document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
                     document.getElementById(page + 'Screen').classList.add('active');
                 });
@@ -3693,13 +3866,12 @@
             // Tasks
             document.getElementById('watchAdBtn').addEventListener('click', watchAdvertisement);
             document.getElementById('joinChannelBtn').addEventListener('click', joinTelegramChannel);
+            document.getElementById('joinPiSwapChannelBtn').addEventListener('click', joinPiSwapChannel);
             document.getElementById('kycBtn').addEventListener('click', startKYCVerification);
             document.getElementById('inviteBtn').addEventListener('click', () => {
-                // Share referral link in Telegram
                 if (tg) {
                     tg.shareUrl(`https://t.me/Piswapnetwork_bot?start=${tg.initDataUnsafe.user?.username || 'user'}`, 'Join Pi Swap and earn rewards!');
                 } else {
-                    // Copy referral link when invite button is clicked
                     document.getElementById('referralLink').select();
                     document.execCommand('copy');
                     showNotification('Referral link copied to clipboard!', 'success');
@@ -3718,11 +3890,9 @@
                             watchAdvertisement();
                             break;
                         case 'invite':
-                            // Share referral link in Telegram
                             if (tg) {
                                 tg.shareUrl(`https://t.me/Piswapnetwork_bot?start=${tg.initDataUnsafe.user?.username || 'user'}`, 'Join Pi Swap and earn rewards!');
                             } else {
-                                // Copy referral link
                                 document.getElementById('referralLink').select();
                                 document.execCommand('copy');
                                 showNotification('Referral link copied to clipboard!', 'success');
@@ -3820,9 +3990,9 @@
         document.head.appendChild(style);
 
         // Initialize timers
-        setInterval(updateClaimTimer, 60000); // Update every minute
-        setInterval(updateTaskStatuses, 1000); // Update every second for cooldown timers
-        setInterval(updateCountdown, 1000); // Update countdown every second
+        setInterval(updateClaimTimer, 60000);
+        setInterval(updateTaskStatuses, 1000);
+        setInterval(updateCountdown, 1000);
     </script>
 </body>
 </html>
