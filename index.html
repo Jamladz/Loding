@@ -2723,6 +2723,12 @@
                 <img src="https://img.icons8.com/ios/50/shop.png" class="btn-icon">
                 <span>Buy Pi Swap</span>
             </button>
+            
+            <!-- NEW: Invite Friends Button in Home Screen -->
+            <button class="action-btn primary cartoon-press" id="inviteFriendsBtn">
+                <img src="https://img.icons8.com/ios/50/invite.png" class="btn-icon">
+                <span>Invite Friends</span>
+            </button>
         </div>
 
         <!-- Game Image Section -->
@@ -2877,17 +2883,18 @@
                 </div>
             </div>
 
+            <!-- MODIFIED: Invite Friends Task - Now requires 3 shares -->
             <div class="task-item" data-task="invite">
                 <div class="task-info">
                     <div class="task-icon">👥</div>
                     <div class="task-details">
                         <h4>Invite Friends</h4>
-                        <p>Invite friends to join Pi Swap</p>
-                        <div class="task-reward">Earn digital dollars soon</div>
+                        <p>Share your referral link with welcome message 3 times on Telegram</p>
+                        <div class="task-reward">+150 π (<span id="inviteSharesCount">0</span>/3)</div>
                     </div>
                 </div>
                 <div class="task-status">
-                    <button class="task-action-btn cartoon-press" id="inviteBtn">
+                    <button class="task-action-btn cartoon-press" id="inviteTaskBtn">
                         <span>Invite</span>
                     </button>
                 </div>
@@ -3510,9 +3517,6 @@
     <div class="overlay" id="overlay"></div>
 
     <script>
-        // All JavaScript code remains exactly the same as in the original
-        // Only CSS has been modified for the cartoon professional look
-        
         // Initialize Telegram WebApp
         const tg = window.Telegram.WebApp;
         if (tg) {
@@ -3563,7 +3567,10 @@
             task200AdsCompleted: false,
             // New property for Pi Swap channel
             joinedPiSwapChannel: false,
-            lastPiSwapChannelJoin: null
+            lastPiSwapChannelJoin: null,
+            // NEW: Track invite shares count
+            inviteSharesCount: 0,
+            inviteTaskCompleted: false
         };
 
         // Game Configuration
@@ -4034,6 +4041,9 @@
                 watch200AdsStatus.className = 'status-badge pending';
             }
 
+            // NEW: Update invite shares count
+            document.getElementById('inviteSharesCount').textContent = userData.inviteSharesCount;
+            
             // Update referral stats
             if (userData.referralCount > 0) {
                 document.getElementById('referralCount').textContent = userData.referralCount;
@@ -4167,6 +4177,7 @@
             const joinPiSwapChannelBtn = document.getElementById('joinPiSwapChannelBtn');
             const kycBtn = document.getElementById('kycBtn');
             const joinTonQashBtn = document.getElementById('joinTonQashBtn');
+            const inviteTaskBtn = document.getElementById('inviteTaskBtn');
 
             // Daily claim status
             if (userData.lastClaim && (now - userData.lastClaim) < 24 * 60 * 60 * 1000) {
@@ -4224,6 +4235,15 @@
             } else {
                 joinTonQashBtn.disabled = false;
                 joinTonQashBtn.innerHTML = '<span>Join</span>';
+            }
+
+            // NEW: Invite task status
+            if (userData.inviteTaskCompleted) {
+                inviteTaskBtn.disabled = true;
+                inviteTaskBtn.textContent = 'Completed';
+            } else {
+                inviteTaskBtn.disabled = false;
+                inviteTaskBtn.innerHTML = '<span>Invite</span>';
             }
         }
 
@@ -4487,6 +4507,69 @@
             }, 2000);
         }
 
+        // NEW: Function to handle invite friends action
+        function inviteFriends() {
+            const referralLink = generateReferralLink();
+            const welcomeMessage = "🚀 Join Pi Swap - The Next Generation Web3 Ecosystem on TON! \n\n" +
+                                 "Earn Pi tokens by completing simple tasks, playing games, and inviting friends. " +
+                                 "Get ready for the upcoming airdrop and be part of the future of decentralized finance! \n\n" +
+                                 `${referralLink}`;
+            
+            if (tg) {
+                // Use Telegram's share functionality
+                tg.shareUrl(referralLink, welcomeMessage);
+                
+                // Track the share
+                userData.inviteSharesCount += 1;
+                
+                // Check if task is completed (3 shares)
+                if (userData.inviteSharesCount >= 3 && !userData.inviteTaskCompleted) {
+                    userData.piBalance += 150;
+                    userData.totalEarned += 150;
+                    userData.tasksCompleted += 1;
+                    userData.airdropPoints += 150;
+                    userData.inviteTaskCompleted = true;
+                    showSuccessMessage('✅ Invite task completed! +150 π');
+                } else {
+                    showSuccessMessage(`Invite shared! Progress: ${userData.inviteSharesCount}/3`);
+                }
+                
+                saveUserData();
+                updateUI();
+            } else {
+                // Fallback for non-Telegram environment
+                navigator.clipboard.writeText(welcomeMessage).then(() => {
+                    showNotification('Invite message copied to clipboard! Share it on Telegram.', 'success');
+                    
+                    // Track the share
+                    userData.inviteSharesCount += 1;
+                    
+                    // Check if task is completed (3 shares)
+                    if (userData.inviteSharesCount >= 3 && !userData.inviteTaskCompleted) {
+                        userData.piBalance += 150;
+                        userData.totalEarned += 150;
+                        userData.tasksCompleted += 1;
+                        userData.airdropPoints += 150;
+                        userData.inviteTaskCompleted = true;
+                        showSuccessMessage('✅ Invite task completed! +150 π');
+                    } else {
+                        showSuccessMessage(`Invite copied! Progress: ${userData.inviteSharesCount}/3`);
+                    }
+                    
+                    saveUserData();
+                    updateUI();
+                });
+            }
+        }
+
+        // Function to copy referral link to clipboard
+        function copyReferralLink() {
+            const referralLink = generateReferralLink();
+            navigator.clipboard.writeText(referralLink).then(() => {
+                showNotification('Referral link copied to clipboard!', 'success');
+            });
+        }
+
         // Function to show the eligibility bottom sheet
         function openEligibilitySheet() {
             document.getElementById('eligibilitySheet').classList.add('active');
@@ -4710,6 +4793,7 @@
                     usernameElement.textContent = '@' + user.username;
                 }
                 
+                // NEW: Get and display Telegram profile picture
                 if (user.photo_url) {
                     avatarElement.src = user.photo_url;
                 }
@@ -4766,6 +4850,9 @@
                 });
             });
 
+            // NEW: Invite Friends Button in Home Screen
+            document.getElementById('inviteFriendsBtn').addEventListener('click', inviteFriends);
+
             // Game image
             document.getElementById('playGameBtn').addEventListener('click', playGameWithAd);
 
@@ -4777,15 +4864,9 @@
             document.getElementById('joinChannelBtn').addEventListener('click', joinTelegramChannel);
             document.getElementById('joinPiSwapChannelBtn').addEventListener('click', joinPiSwapChannel);
             document.getElementById('kycBtn').addEventListener('click', startKYCVerification);
-            document.getElementById('inviteBtn').addEventListener('click', () => {
-                if (tg) {
-                    tg.shareUrl(`https://t.me/Piswapnetwork_bot?start=${tg.initDataUnsafe.user?.username || 'user'}`, 'Join Pi Swap and earn rewards!');
-                } else {
-                    document.getElementById('referralLink').select();
-                    document.execCommand('copy');
-                    showNotification('Referral link copied to clipboard!', 'success');
-                }
-            });
+            
+            // MODIFIED: Invite task button
+            document.getElementById('inviteTaskBtn').addEventListener('click', inviteFriends);
             
             // TonQash task
             document.getElementById('joinTonQashBtn').addEventListener('click', joinTonQash);
@@ -4799,13 +4880,7 @@
                             watchAdvertisement();
                             break;
                         case 'invite':
-                            if (tg) {
-                                tg.shareUrl(`https://t.me/Piswapnetwork_bot?start=${tg.initDataUnsafe.user?.username || 'user'}`, 'Join Pi Swap and earn rewards!');
-                            } else {
-                                document.getElementById('referralLink').select();
-                                document.execCommand('copy');
-                                showNotification('Referral link copied to clipboard!', 'success');
-                            }
+                            inviteFriends();
                             break;
                         case 'kyc':
                             startKYCVerification();
@@ -4832,11 +4907,7 @@
             document.getElementById('verifyAirdropBtn').addEventListener('click', verifyAirdrop);
 
             // Referral copy button
-            document.getElementById('copyReferralBtn').addEventListener('click', () => {
-                document.getElementById('referralLink').select();
-                document.execCommand('copy');
-                showNotification('Referral link copied to clipboard!', 'success');
-            });
+            document.getElementById('copyReferralBtn').addEventListener('click', copyReferralLink);
 
             // Close ad button
             document.getElementById('closeAdBtn').addEventListener('click', closeAdScreen);
